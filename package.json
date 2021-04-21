@@ -12,6 +12,7 @@
     "build": "npm run clean && tsc --module commonjs",
     "clean": "rimraf dist",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "release:patch": "./tools/release.sh patch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
