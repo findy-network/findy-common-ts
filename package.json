@@ -2,9 +2,9 @@
   "name": "findy-common-ts",
   "version": "0.0.1",
   "description": "TS helpers for findy-agent API",
-  "main": "dist/findy-common-ts.js",
-  "module": "dist/findy-common-ts.js",
-  "typings": "dist/types/findy-common-ts.d.ts",
+  "main": "dist/lib.js",
+  "module": "dist/lib.js",
+  "typings": "dist/types/lib.d.ts",
   "files": [
     "dist"
   ],
