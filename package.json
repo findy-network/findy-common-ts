@@ -12,6 +12,8 @@
     "build": "npm run clean && tsc --module commonjs",
     "clean": "rimraf dist",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "licenses:report": "node ./tools/prep-license-check.js report ./dist/licenses.txt",
+    "licenses:check": "node ./tools/prep-license-check.js",
     "release:patch": "./tools/release.sh patch",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,6 +36,7 @@
   "homepage": "https://github.com/findy-network/findy-common-ts#readme",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.0",
+    "js-green-licenses": "^3.0.1",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2"
   }
