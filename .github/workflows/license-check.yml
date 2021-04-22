@@ -1,4 +1,4 @@
-name: test
+name: license-check
 on: push
 jobs:
   build:
