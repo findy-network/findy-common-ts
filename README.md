@@ -9,3 +9,9 @@ Module that provides common findy-agent usage functionality.
    ```
    npm install -g typescript
    ```
+
+1. Install deps
+
+   ```
+   npm install --ignore-scripts
+   ```
