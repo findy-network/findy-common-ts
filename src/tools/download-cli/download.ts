@@ -45,5 +45,7 @@ export default async (platform: string, arch: string) => {
 
   await tar.extract({ file: filenames[0], cwd: outputPath });
 
+  fs.rmSync(filenames[0]);
+
   return `${outputPath}/findy-agent-cli`;
 };
