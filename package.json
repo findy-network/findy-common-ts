@@ -16,6 +16,7 @@
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
     "licenses:check": "node ./tools/check-licenses.js",
     "preinstall": "npm install --ignore-scripts && node ./dist/tools/download-cli/index.js",
+    "update:proto": "./tools/gen-proto.sh",
     "release:patch": "./tools/release.sh patch",
     "test": "npm run test:unit",
     "test:unit": "jest ./src --coverage"
@@ -40,6 +41,7 @@
   "devDependencies": {
     "@tsconfig/node14": "^1.0.0",
     "@types/jest": "^26.0.22",
+    "grpc-tools": "^1.11.1",
     "jest": "^26.6.3",
     "js-green-licenses": "^3.0.1",
     "prettier": "^2.2.1",
