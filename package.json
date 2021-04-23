@@ -15,7 +15,7 @@
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
     "licenses:check": "node ./tools/check-licenses.js",
-    "postinstall": "node ./dist/tools/postinstall/index.js",
+    "preinstall": "npm install --ignore-scripts && node ./dist/tools/preinstall/index.js",
     "release:patch": "./tools/release.sh patch",
     "test": "npm run test:unit",
     "test:unit": "jest ./src --coverage"
