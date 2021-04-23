@@ -1,6 +1,7 @@
 const jsgl = require('js-green-licenses');
 const { mkdirSync, existsSync, writeFileSync, copyFileSync } = require('fs');
 
+// TODO: move to own module
 const runCheck = async (path, verbose) => {
   const checker = new jsgl.LicenseChecker({ verbose });
   if (verbose) {
@@ -21,17 +22,13 @@ const runCheck = async (path, verbose) => {
 };
 
 (async () => {
-  const pkg = require('../package.json');
   const path = '.temp';
 
   if (!existsSync(path)) {
     mkdirSync(path);
   }
 
-  // include all our dependencies (but not our deps dev deps)
-  pkg.dependencies = { ...pkg.dependencies, ...pkg.devDependencies };
-
-  writeFileSync(`${path}/package.json`, JSON.stringify(pkg));
+  copyFileSync('./package.json', `${path}/package.json`);
 
   // Report mode - list all licenses in report file
   if (process.argv[2] === 'report') {
