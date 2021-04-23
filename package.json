@@ -5,6 +5,7 @@
   "main": "dist/lib.js",
   "module": "dist/lib.js",
   "typings": "dist/types/lib.d.ts",
+  "bin": "./bin/findy-agent-cli",
   "files": [
     "dist"
   ],
@@ -51,5 +52,8 @@
     "@types/tar": "^4.0.4",
     "tar": "^6.1.0",
     "winston": "^3.3.3"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   }
 }
