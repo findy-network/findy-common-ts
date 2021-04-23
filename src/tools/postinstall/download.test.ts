@@ -17,7 +17,7 @@ describe('Download', () => {
     const arch = supported.arch[process.arch];
 
     const fileName = await download(platform, arch);
-    expect(fileName).toBeDefined();
+    expect(fileName).not.toBeNull();
 
     if (fileName) {
       const fileStats = statSync(fileName);
