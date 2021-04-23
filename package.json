@@ -1,5 +1,5 @@
 {
-  "name": "findy-common-ts",
+  "name": "@findy-network/findy-common-ts",
   "version": "0.0.3",
   "description": "TS helpers for findy-agent API",
   "main": "dist/lib.js",
