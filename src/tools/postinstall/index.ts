@@ -1,6 +1,6 @@
 import supported from './supported';
 import download from './download';
-import log from '../log';
+import log from '../../log';
 
 async () => {
   const platform = supported.platform[process.platform];
