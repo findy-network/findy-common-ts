@@ -1,6 +1,6 @@
 {
   "name": "findy-common-ts",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "TS helpers for findy-agent API",
   "main": "dist/lib.js",
   "module": "dist/lib.js",
