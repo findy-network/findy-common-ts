@@ -19,7 +19,9 @@ describe('Download', () => {
     const fileName = await download(platform, arch);
     expect(fileName).toBeDefined();
 
-    const fileStats = statSync(fileName);
-    expect(fileStats.size).toBeGreaterThan(0);
+    if (fileName) {
+      const fileStats = statSync(fileName);
+      expect(fileStats.size).toBeGreaterThan(0);
+    }
   }, 10000);
 });
