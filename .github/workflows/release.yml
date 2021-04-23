@@ -15,6 +15,7 @@ jobs:
         with:
           node-version: '14.x'
           registry-url: 'https://npm.pkg.github.com'
+          scope: 'findy-network'
       - run: npm ci --ignore-scripts
       - run: npm run build
       - run: npm publish
