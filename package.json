@@ -2,15 +2,13 @@
   "name": "@findy-network/findy-common-ts",
   "version": "0.0.11",
   "description": "TS helpers for findy-agent API",
-  "main": "dist/lib.js",
-  "module": "dist/lib.js",
-  "typings": "dist/types/lib.d.ts",
   "bin": "./bin/findy-agent-cli",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "npm run clean && tsc --module commonjs",
+    "build": "npm run clean && tsc --module commonjs && npm run build:idl",
+    "build:idl": "tsc src/idl/* --allowJs --outDir dist/idl && cp src/idl/*.d.ts dist/idl",
     "clean": "rimraf dist",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
