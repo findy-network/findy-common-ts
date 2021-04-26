@@ -11,11 +11,13 @@ describe('Acator', () => {
     let registered = false;
     const acator = authenticator(
       props,
-      (cmd) =>
-        new Promise((resolve, reject) => {
-          const cfg: { [key: string]: any } = { ...props };
-          if (Object.keys(cfg).find((item) => !cmd.includes(cfg[item]))) {
-            reject();
+      async (cmd) =>
+        await new Promise((resolve, reject) => {
+          const cfg: { [key: string]: string } = { ...props };
+          if (
+            Object.keys(cfg).find((item) => !cmd.includes(cfg[item])) != null
+          ) {
+            reject(new Error('failed'));
             return;
           }
           if (registered && cmd.includes('login')) {
@@ -24,7 +26,7 @@ describe('Acator', () => {
             registered = true;
             resolve('');
           } else {
-            reject();
+            reject(new Error('failed'));
           }
         })
     );

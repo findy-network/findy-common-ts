@@ -8,24 +8,27 @@ interface AcatorProps {
   key: string;
 }
 
-const doExec = (cmd: string) => {
-  return new Promise(
+const doExec = async (cmd: string): Promise<string> => {
+  return await new Promise(
     (resolve: (res: string) => void, reject: (err: ExecException) => void) => {
       execCmd(cmd, (error, stdout, stderr) => {
-        if (error) {
+        if (error != null) {
           log.warn(error);
           reject(error);
         } else {
-          resolve(stdout ? stdout : stderr);
+          resolve(stdout != null ? stdout : stderr);
         }
       });
     }
   );
 };
 
-export default ({ authUrl, userName, key }: AcatorProps, exec = doExec) => {
+export default (
+  { authUrl, userName, key }: AcatorProps,
+  exec = doExec
+): { login: () => Promise<string> } => {
   // TODO: counter and guid for production setup
-  const config: { [key: string]: any } = {
+  const config: { [key: string]: string } = {
     url: authUrl,
     'user-name': userName,
     key
@@ -37,7 +40,7 @@ export default ({ authUrl, userName, key }: AcatorProps, exec = doExec) => {
   const loginCmd = `${rootCmd} login ${params}`;
   const registerCmd = `${rootCmd} register ${params}`;
 
-  const login = async () => {
+  const login = async (): Promise<string> => {
     // First try login. If login fails, we probably haven't registered
     // so try to register and then login.
     try {

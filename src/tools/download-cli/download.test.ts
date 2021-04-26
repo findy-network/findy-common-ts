@@ -2,7 +2,7 @@ import { statSync, rmSync, existsSync } from 'fs';
 import download, { outputPath } from './download';
 import supported from './supported';
 
-const cleanUp = () => {
+const cleanUp = (): void => {
   if (existsSync(outputPath)) {
     rmSync(outputPath, { recursive: true });
   }
@@ -17,11 +17,9 @@ describe('Download', () => {
     const arch = supported.arch[process.arch];
 
     const fileName = await download(platform, arch);
-    expect(fileName).not.toBeNull();
+    expect(fileName).not.toBe('');
 
-    if (fileName) {
-      const fileStats = statSync(fileName);
-      expect(fileStats.size).toBeGreaterThan(0);
-    }
+    const fileStats = statSync(fileName);
+    expect(fileStats.size).toBeGreaterThan(0);
   }, 10000);
 });

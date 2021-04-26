@@ -3,7 +3,7 @@ import { createLogger, format, transports } from 'winston';
 const { Console } = transports;
 
 const outputFormat = format.printf(
-  (info) => `[${info.timestamp}] ${info.level}: ${info.message}`
+  (info) => `[${info.timestamp as string}] ${info.level}: ${info.message}`
 );
 
 const logConfig = {

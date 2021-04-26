@@ -1,21 +1,17 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
+  ignorePatterns: ['src/idl'],
   plugins: ['@typescript-eslint', 'jest'],
   extends: [
     'standard-with-typescript',
     'prettier',
     'plugin:jest/recommended',
     'plugin:import/errors',
-    'plugin:node/recommended'
+    'plugin:import/typescript'
   ],
   parserOptions: {
-    project: ['tsconfig.json']
+    project: ['./tsconfig.eslint.json']
   },
-  rules: {
-    'node/no-unsupported-features/es-syntax': [
-      'error',
-      { ignores: ['modules'] }
-    ]
-  }
+  rules: {}
 };

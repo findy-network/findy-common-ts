@@ -10,14 +10,15 @@ import log from '../../log';
 export const CLI_VERSION = 'v0.24.3';
 export const outputPath = './bin';
 
-export default async (platform: string, arch: string) => {
+export default async (platform: string, arch: string): Promise<string> => {
   const user = 'findy-network';
   const repo = 'findy-agent-cli';
 
   log.info(`Download binary for ${platform} - ${arch}`);
 
-  const filterRelease = (item: GithubRelease) => item.tag_name === CLI_VERSION;
-  const filterAsset = (item: GithubReleaseAsset) =>
+  const filterRelease = (item: GithubRelease): boolean =>
+    item.tag_name === CLI_VERSION;
+  const filterAsset = (item: GithubReleaseAsset): boolean =>
     item.name.includes(platform) && item.name.includes(arch);
   const leaveZipped = true;
   const disableLogging = true;
@@ -40,7 +41,7 @@ export default async (platform: string, arch: string) => {
     filenames.push(...res);
   } catch (err) {
     log.error(err);
-    return null;
+    return '';
   }
 
   await tar.extract({ file: filenames[0], cwd: outputPath });
