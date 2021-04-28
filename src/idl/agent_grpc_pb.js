@@ -5,7 +5,7 @@
 //
 //
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var agent_pb = require('./agent_pb.js');
 var protocol_pb = require('./protocol_pb.js');
 

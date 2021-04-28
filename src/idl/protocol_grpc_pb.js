@@ -5,7 +5,7 @@
 //
 //
 'use strict';
-var grpc = require('grpc');
+var grpc = require('@grpc/grpc-js');
 var protocol_pb = require('./protocol_pb.js');
 
 function serialize_agency_v1_Protocol(arg) {

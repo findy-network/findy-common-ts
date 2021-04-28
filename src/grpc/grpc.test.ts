@@ -2,15 +2,24 @@ import { ServerCredentials, Server, loadPackageDefinition } from 'grpc';
 import { loadSync } from '@grpc/proto-loader';
 import { readFileSync } from 'fs';
 
-import { createClient } from './index';
-import { AgentServiceClient } from '../idl/agent_grpc_pb';
+import grpc, { ConnectionProps } from './index';
+import { PingMsg } from '../idl/agent_pb';
 
 const port = 50053;
+
+const props: ConnectionProps = {
+  serverAddress: 'localhost',
+  serverPort: port,
+  certPath: './tools/config/server.crt',
+  verifyServerIdentity: false
+};
+
+const connection = grpc(props);
 
 const { start: startMock, stop: stopMock } = (() => {
   const server = new Server();
   const start = (): void => {
-    const pubKey = readFileSync('./tools/config/server.crt');
+    const pubKey = readFileSync(props.certPath);
     const privKey = readFileSync('./tools/config/server.key');
     const creds = ServerCredentials.createSsl(null, [
       { private_key: privKey, cert_chain: pubKey }
@@ -18,8 +27,9 @@ const { start: startMock, stop: stopMock } = (() => {
 
     const packageDefinition = loadSync('./idl/agent.proto');
     const agency = loadPackageDefinition(packageDefinition).agency as any;
-    server.addService(agency.Agent.service, {
+    server.addService(agency.v1.AgentService.service, {
       Listen: () => {},
+      Wait: () => {},
       Give: () => {},
       CreateInvitation: () => {},
       SetImplId: () => {},
@@ -47,7 +57,11 @@ afterAll(stopMock);
 
 describe('GRPC', () => {
   it('should open connection', async () => {
-    const client = createClient(() => new AgentServiceClient());
-    expect({}).toBeDefined();
+    const { createAgentClient } = connection;
+    const client = await createAgentClient(props);
+    expect(client).toBeDefined();
+
+    const res = await client.ping();
+    console.log(res);
   });
 });
