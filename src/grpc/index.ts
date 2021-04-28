@@ -1,6 +1,7 @@
 import fs from 'fs';
 import { credentials, ChannelCredentials } from '@grpc/grpc-js';
 import { ServiceClient } from '@grpc/grpc-js/build/src/make-client';
+import { AgentServiceClient } from '../idl/agent_grpc_pb';
 
 interface ConnectionProps {
   certPath: string;
@@ -32,7 +33,10 @@ export default ({
     return newClient;
   };
 
+  const createAgentClient = async () =>
+    createClient((url, creds) => new AgentServiceClient(url, creds));
+
   return {
-    createClient
+    createAgentClient
   };
 };

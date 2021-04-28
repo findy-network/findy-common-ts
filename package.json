@@ -18,7 +18,8 @@
     "release:patch": "./tools/release.sh patch",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "eslint ./src",
-    "test:unit": "jest ./src --coverage"
+    "test:unit": "jest ./src --coverage",
+    "test:watch": "jest ./src --watch"
   },
   "repository": {
     "type": "git",
@@ -38,6 +39,7 @@
   },
   "homepage": "https://github.com/findy-network/findy-common-ts#readme",
   "devDependencies": {
+    "@grpc/proto-loader": "^0.6.1",
     "@tsconfig/node14": "^1.0.0",
     "@types/jest": "^26.0.22",
     "@typescript-eslint/eslint-plugin": "^4.22.0",
@@ -49,13 +51,14 @@
     "eslint-plugin-jest": "^24.3.5",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.0",
+    "grpc": "^1.24.7",
     "grpc-tools": "^1.11.1",
+    "grpc_tools_node_protoc_ts": "^5.2.1",
     "jest": "^26.6.3",
     "js-green-licenses": "^3.0.1",
     "prettier": "^2.2.1",
     "rimraf": "^3.0.2",
     "ts-jest": "^26.5.5",
-    "ts-protoc-gen": "^0.14.0",
     "typescript": "^4.2.4"
   },
   "dependencies": {

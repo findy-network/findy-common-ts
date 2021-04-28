@@ -1,499 +1,511 @@
-// package: agency
+// package: agency.v1
 // file: agent.proto
+
+/* tslint:disable */
+/* eslint-disable */
 
 import * as jspb from "google-protobuf";
 import * as protocol_pb from "./protocol_pb";
 
-export class SchemaData extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class SchemaData extends jspb.Message { 
+    getId(): string;
+    setId(value: string): SchemaData;
+    getData(): string;
+    setData(value: string): SchemaData;
 
-  getData(): string;
-  setData(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): SchemaData.AsObject;
-  static toObject(includeInstance: boolean, msg: SchemaData): SchemaData.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: SchemaData, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): SchemaData;
-  static deserializeBinaryFromReader(message: SchemaData, reader: jspb.BinaryReader): SchemaData;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SchemaData.AsObject;
+    static toObject(includeInstance: boolean, msg: SchemaData): SchemaData.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SchemaData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SchemaData;
+    static deserializeBinaryFromReader(message: SchemaData, reader: jspb.BinaryReader): SchemaData;
 }
 
 export namespace SchemaData {
-  export type AsObject = {
-    id: string,
-    data: string,
-  }
+    export type AsObject = {
+        id: string,
+        data: string,
+    }
 }
 
-export class CredDefData extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class CredDefData extends jspb.Message { 
+    getId(): string;
+    setId(value: string): CredDefData;
+    getData(): string;
+    setData(value: string): CredDefData;
 
-  getData(): string;
-  setData(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CredDefData.AsObject;
-  static toObject(includeInstance: boolean, msg: CredDefData): CredDefData.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: CredDefData, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CredDefData;
-  static deserializeBinaryFromReader(message: CredDefData, reader: jspb.BinaryReader): CredDefData;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CredDefData.AsObject;
+    static toObject(includeInstance: boolean, msg: CredDefData): CredDefData.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CredDefData, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CredDefData;
+    static deserializeBinaryFromReader(message: CredDefData, reader: jspb.BinaryReader): CredDefData;
 }
 
 export namespace CredDefData {
-  export type AsObject = {
-    id: string,
-    data: string,
-  }
+    export type AsObject = {
+        id: string,
+        data: string,
+    }
 }
 
-export class SchemaCreate extends jspb.Message {
-  getName(): string;
-  setName(value: string): void;
+export class SchemaCreate extends jspb.Message { 
+    getName(): string;
+    setName(value: string): SchemaCreate;
+    getVersion(): string;
+    setVersion(value: string): SchemaCreate;
+    clearAttributesList(): void;
+    getAttributesList(): Array<string>;
+    setAttributesList(value: Array<string>): SchemaCreate;
+    addAttributes(value: string, index?: number): string;
 
-  getVersion(): string;
-  setVersion(value: string): void;
-
-  clearAttrsList(): void;
-  getAttrsList(): Array<string>;
-  setAttrsList(value: Array<string>): void;
-  addAttrs(value: string, index?: number): string;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): SchemaCreate.AsObject;
-  static toObject(includeInstance: boolean, msg: SchemaCreate): SchemaCreate.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: SchemaCreate, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): SchemaCreate;
-  static deserializeBinaryFromReader(message: SchemaCreate, reader: jspb.BinaryReader): SchemaCreate;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SchemaCreate.AsObject;
+    static toObject(includeInstance: boolean, msg: SchemaCreate): SchemaCreate.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SchemaCreate, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SchemaCreate;
+    static deserializeBinaryFromReader(message: SchemaCreate, reader: jspb.BinaryReader): SchemaCreate;
 }
 
 export namespace SchemaCreate {
-  export type AsObject = {
-    name: string,
-    version: string,
-    attrsList: Array<string>,
-  }
+    export type AsObject = {
+        name: string,
+        version: string,
+        attributesList: Array<string>,
+    }
 }
 
-export class Schema extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class Schema extends jspb.Message { 
+    getId(): string;
+    setId(value: string): Schema;
 
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Schema.AsObject;
-  static toObject(includeInstance: boolean, msg: Schema): Schema.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: Schema, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Schema;
-  static deserializeBinaryFromReader(message: Schema, reader: jspb.BinaryReader): Schema;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Schema.AsObject;
+    static toObject(includeInstance: boolean, msg: Schema): Schema.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Schema, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Schema;
+    static deserializeBinaryFromReader(message: Schema, reader: jspb.BinaryReader): Schema;
 }
 
 export namespace Schema {
-  export type AsObject = {
-    id: string,
-  }
+    export type AsObject = {
+        id: string,
+    }
 }
 
-export class CredDefCreate extends jspb.Message {
-  getSchemaId(): string;
-  setSchemaId(value: string): void;
+export class CredDefCreate extends jspb.Message { 
+    getSchemaid(): string;
+    setSchemaid(value: string): CredDefCreate;
+    getTag(): string;
+    setTag(value: string): CredDefCreate;
 
-  getTag(): string;
-  setTag(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CredDefCreate.AsObject;
-  static toObject(includeInstance: boolean, msg: CredDefCreate): CredDefCreate.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: CredDefCreate, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CredDefCreate;
-  static deserializeBinaryFromReader(message: CredDefCreate, reader: jspb.BinaryReader): CredDefCreate;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CredDefCreate.AsObject;
+    static toObject(includeInstance: boolean, msg: CredDefCreate): CredDefCreate.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CredDefCreate, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CredDefCreate;
+    static deserializeBinaryFromReader(message: CredDefCreate, reader: jspb.BinaryReader): CredDefCreate;
 }
 
 export namespace CredDefCreate {
-  export type AsObject = {
-    schemaId: string,
-    tag: string,
-  }
+    export type AsObject = {
+        schemaid: string,
+        tag: string,
+    }
 }
 
-export class CredDef extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class CredDef extends jspb.Message { 
+    getId(): string;
+    setId(value: string): CredDef;
 
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): CredDef.AsObject;
-  static toObject(includeInstance: boolean, msg: CredDef): CredDef.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: CredDef, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): CredDef;
-  static deserializeBinaryFromReader(message: CredDef, reader: jspb.BinaryReader): CredDef;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): CredDef.AsObject;
+    static toObject(includeInstance: boolean, msg: CredDef): CredDef.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: CredDef, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): CredDef;
+    static deserializeBinaryFromReader(message: CredDef, reader: jspb.BinaryReader): CredDef;
 }
 
 export namespace CredDef {
-  export type AsObject = {
-    id: string,
-  }
+    export type AsObject = {
+        id: string,
+    }
 }
 
-export class PingMsg extends jspb.Message {
-  getId(): number;
-  setId(value: number): void;
+export class PingMsg extends jspb.Message { 
+    getId(): number;
+    setId(value: number): PingMsg;
+    getPingController(): boolean;
+    setPingController(value: boolean): PingMsg;
 
-  getPingController(): boolean;
-  setPingController(value: boolean): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): PingMsg.AsObject;
-  static toObject(includeInstance: boolean, msg: PingMsg): PingMsg.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: PingMsg, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): PingMsg;
-  static deserializeBinaryFromReader(message: PingMsg, reader: jspb.BinaryReader): PingMsg;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): PingMsg.AsObject;
+    static toObject(includeInstance: boolean, msg: PingMsg): PingMsg.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: PingMsg, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): PingMsg;
+    static deserializeBinaryFromReader(message: PingMsg, reader: jspb.BinaryReader): PingMsg;
 }
 
 export namespace PingMsg {
-  export type AsObject = {
-    id: number,
-    pingController: boolean,
-  }
+    export type AsObject = {
+        id: number,
+        pingController: boolean,
+    }
 }
 
-export class SAImplementation extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class SAImplementation extends jspb.Message { 
+    getId(): string;
+    setId(value: string): SAImplementation;
+    getEndpoint(): string;
+    setEndpoint(value: string): SAImplementation;
+    getKey(): string;
+    setKey(value: string): SAImplementation;
+    getPersistent(): boolean;
+    setPersistent(value: boolean): SAImplementation;
 
-  getEndpoint(): string;
-  setEndpoint(value: string): void;
-
-  getKey(): string;
-  setKey(value: string): void;
-
-  getPersistent(): boolean;
-  setPersistent(value: boolean): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): SAImplementation.AsObject;
-  static toObject(includeInstance: boolean, msg: SAImplementation): SAImplementation.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: SAImplementation, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): SAImplementation;
-  static deserializeBinaryFromReader(message: SAImplementation, reader: jspb.BinaryReader): SAImplementation;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): SAImplementation.AsObject;
+    static toObject(includeInstance: boolean, msg: SAImplementation): SAImplementation.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: SAImplementation, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): SAImplementation;
+    static deserializeBinaryFromReader(message: SAImplementation, reader: jspb.BinaryReader): SAImplementation;
 }
 
 export namespace SAImplementation {
-  export type AsObject = {
-    id: string,
-    endpoint: string,
-    key: string,
-    persistent: boolean,
-  }
+    export type AsObject = {
+        id: string,
+        endpoint: string,
+        key: string,
+        persistent: boolean,
+    }
 }
 
-export class InvitationBase extends jspb.Message {
-  getLabel(): string;
-  setLabel(value: string): void;
+export class InvitationBase extends jspb.Message { 
+    getLabel(): string;
+    setLabel(value: string): InvitationBase;
+    getId(): string;
+    setId(value: string): InvitationBase;
+    getExpiration(): number;
+    setExpiration(value: number): InvitationBase;
 
-  getId(): string;
-  setId(value: string): void;
-
-  getExpiration(): number;
-  setExpiration(value: number): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): InvitationBase.AsObject;
-  static toObject(includeInstance: boolean, msg: InvitationBase): InvitationBase.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: InvitationBase, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): InvitationBase;
-  static deserializeBinaryFromReader(message: InvitationBase, reader: jspb.BinaryReader): InvitationBase;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): InvitationBase.AsObject;
+    static toObject(includeInstance: boolean, msg: InvitationBase): InvitationBase.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: InvitationBase, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): InvitationBase;
+    static deserializeBinaryFromReader(message: InvitationBase, reader: jspb.BinaryReader): InvitationBase;
 }
 
 export namespace InvitationBase {
-  export type AsObject = {
-    label: string,
-    id: string,
-    expiration: number,
-  }
+    export type AsObject = {
+        label: string,
+        id: string,
+        expiration: number,
+    }
 }
 
-export class Invitation extends jspb.Message {
-  getJsonStr(): string;
-  setJsonStr(value: string): void;
+export class Invitation extends jspb.Message { 
+    getJson(): string;
+    setJson(value: string): Invitation;
+    getUrl(): string;
+    setUrl(value: string): Invitation;
 
-  getUrl(): string;
-  setUrl(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Invitation.AsObject;
-  static toObject(includeInstance: boolean, msg: Invitation): Invitation.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: Invitation, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Invitation;
-  static deserializeBinaryFromReader(message: Invitation, reader: jspb.BinaryReader): Invitation;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Invitation.AsObject;
+    static toObject(includeInstance: boolean, msg: Invitation): Invitation.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Invitation, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Invitation;
+    static deserializeBinaryFromReader(message: Invitation, reader: jspb.BinaryReader): Invitation;
 }
 
 export namespace Invitation {
-  export type AsObject = {
-    jsonStr: string,
-    url: string,
-  }
+    export type AsObject = {
+        json: string,
+        url: string,
+    }
 }
 
-export class Answer extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class Answer extends jspb.Message { 
+    getId(): string;
+    setId(value: string): Answer;
 
-  hasClientId(): boolean;
-  clearClientId(): void;
-  getClientId(): ClientID | undefined;
-  setClientId(value?: ClientID): void;
+    hasClientid(): boolean;
+    clearClientid(): void;
+    getClientid(): ClientID | undefined;
+    setClientid(value?: ClientID): Answer;
+    getAck(): boolean;
+    setAck(value: boolean): Answer;
+    getInfo(): string;
+    setInfo(value: string): Answer;
 
-  getAck(): boolean;
-  setAck(value: boolean): void;
-
-  getInfo(): string;
-  setInfo(value: string): void;
-
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Answer.AsObject;
-  static toObject(includeInstance: boolean, msg: Answer): Answer.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: Answer, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Answer;
-  static deserializeBinaryFromReader(message: Answer, reader: jspb.BinaryReader): Answer;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Answer.AsObject;
+    static toObject(includeInstance: boolean, msg: Answer): Answer.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Answer, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Answer;
+    static deserializeBinaryFromReader(message: Answer, reader: jspb.BinaryReader): Answer;
 }
 
 export namespace Answer {
-  export type AsObject = {
-    id: string,
-    clientId?: ClientID.AsObject,
-    ack: boolean,
-    info: string,
-  }
+    export type AsObject = {
+        id: string,
+        clientid?: ClientID.AsObject,
+        ack: boolean,
+        info: string,
+    }
 }
 
-export class ClientID extends jspb.Message {
-  getId(): string;
-  setId(value: string): void;
+export class ClientID extends jspb.Message { 
+    getId(): string;
+    setId(value: string): ClientID;
 
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): ClientID.AsObject;
-  static toObject(includeInstance: boolean, msg: ClientID): ClientID.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: ClientID, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): ClientID;
-  static deserializeBinaryFromReader(message: ClientID, reader: jspb.BinaryReader): ClientID;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ClientID.AsObject;
+    static toObject(includeInstance: boolean, msg: ClientID): ClientID.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ClientID, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ClientID;
+    static deserializeBinaryFromReader(message: ClientID, reader: jspb.BinaryReader): ClientID;
 }
 
 export namespace ClientID {
-  export type AsObject = {
-    id: string,
-  }
+    export type AsObject = {
+        id: string,
+    }
 }
 
-export class AgentStatus extends jspb.Message {
-  hasClientId(): boolean;
-  clearClientId(): void;
-  getClientId(): ClientID | undefined;
-  setClientId(value?: ClientID): void;
+export class AgentStatus extends jspb.Message { 
 
-  hasNotification(): boolean;
-  clearNotification(): void;
-  getNotification(): Notification | undefined;
-  setNotification(value?: Notification): void;
+    hasClientid(): boolean;
+    clearClientid(): void;
+    getClientid(): ClientID | undefined;
+    setClientid(value?: ClientID): AgentStatus;
 
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): AgentStatus.AsObject;
-  static toObject(includeInstance: boolean, msg: AgentStatus): AgentStatus.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: AgentStatus, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): AgentStatus;
-  static deserializeBinaryFromReader(message: AgentStatus, reader: jspb.BinaryReader): AgentStatus;
+    hasNotification(): boolean;
+    clearNotification(): void;
+    getNotification(): Notification | undefined;
+    setNotification(value?: Notification): AgentStatus;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): AgentStatus.AsObject;
+    static toObject(includeInstance: boolean, msg: AgentStatus): AgentStatus.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: AgentStatus, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): AgentStatus;
+    static deserializeBinaryFromReader(message: AgentStatus, reader: jspb.BinaryReader): AgentStatus;
 }
 
 export namespace AgentStatus {
-  export type AsObject = {
-    clientId?: ClientID.AsObject,
-    notification?: Notification.AsObject,
-  }
+    export type AsObject = {
+        clientid?: ClientID.AsObject,
+        notification?: Notification.AsObject,
+    }
 }
 
-export class Notification extends jspb.Message {
-  getTypeId(): Notification.TypeMap[keyof Notification.TypeMap];
-  setTypeId(value: Notification.TypeMap[keyof Notification.TypeMap]): void;
+export class Notification extends jspb.Message { 
+    getTypeid(): Notification.Type;
+    setTypeid(value: Notification.Type): Notification;
+    getId(): string;
+    setId(value: string): Notification;
+    getConnectionid(): string;
+    setConnectionid(value: string): Notification;
+    getProtocolid(): string;
+    setProtocolid(value: string): Notification;
+    getProtocolFamily(): string;
+    setProtocolFamily(value: string): Notification;
+    getTimestamp(): number;
+    setTimestamp(value: number): Notification;
+    getProtocolType(): protocol_pb.Protocol.Type;
+    setProtocolType(value: protocol_pb.Protocol.Type): Notification;
+    getRole(): protocol_pb.Protocol.Role;
+    setRole(value: protocol_pb.Protocol.Role): Notification;
+    getPid(): string;
+    setPid(value: string): Notification;
 
-  getId(): string;
-  setId(value: string): void;
-
-  getConnectionId(): string;
-  setConnectionId(value: string): void;
-
-  getProtocolId(): string;
-  setProtocolId(value: string): void;
-
-  getProtocolFamily(): string;
-  setProtocolFamily(value: string): void;
-
-  getTimestamp(): number;
-  setTimestamp(value: number): void;
-
-  getProtocolType(): protocol_pb.Protocol.TypeMap[keyof protocol_pb.Protocol.TypeMap];
-  setProtocolType(value: protocol_pb.Protocol.TypeMap[keyof protocol_pb.Protocol.TypeMap]): void;
-
-  getRole(): protocol_pb.Protocol.RoleMap[keyof protocol_pb.Protocol.RoleMap];
-  setRole(value: protocol_pb.Protocol.RoleMap[keyof protocol_pb.Protocol.RoleMap]): void;
-
-  getPid(): string;
-  setPid(value: string): void;
-
-  hasIssuePropose(): boolean;
-  clearIssuePropose(): void;
-  getIssuePropose(): Notification.IssuePropose | undefined;
-  setIssuePropose(value?: Notification.IssuePropose): void;
-
-  hasProofVerify(): boolean;
-  clearProofVerify(): void;
-  getProofVerify(): Notification.ProofVerify | undefined;
-  setProofVerify(value?: Notification.ProofVerify): void;
-
-  getQuestionCase(): Notification.QuestionCase;
-  serializeBinary(): Uint8Array;
-  toObject(includeInstance?: boolean): Notification.AsObject;
-  static toObject(includeInstance: boolean, msg: Notification): Notification.AsObject;
-  static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-  static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-  static serializeBinaryToWriter(message: Notification, writer: jspb.BinaryWriter): void;
-  static deserializeBinary(bytes: Uint8Array): Notification;
-  static deserializeBinaryFromReader(message: Notification, reader: jspb.BinaryReader): Notification;
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Notification.AsObject;
+    static toObject(includeInstance: boolean, msg: Notification): Notification.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Notification, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Notification;
+    static deserializeBinaryFromReader(message: Notification, reader: jspb.BinaryReader): Notification;
 }
 
 export namespace Notification {
-  export type AsObject = {
-    typeId: Notification.TypeMap[keyof Notification.TypeMap],
-    id: string,
-    connectionId: string,
-    protocolId: string,
-    protocolFamily: string,
-    timestamp: number,
-    protocolType: protocol_pb.Protocol.TypeMap[keyof protocol_pb.Protocol.TypeMap],
-    role: protocol_pb.Protocol.RoleMap[keyof protocol_pb.Protocol.RoleMap],
-    pid: string,
-    issuePropose?: Notification.IssuePropose.AsObject,
-    proofVerify?: Notification.ProofVerify.AsObject,
-  }
-
-  export class IssuePropose extends jspb.Message {
-    getCredDefId(): string;
-    setCredDefId(value: string): void;
-
-    getValuesJson(): string;
-    setValuesJson(value: string): void;
-
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): IssuePropose.AsObject;
-    static toObject(includeInstance: boolean, msg: IssuePropose): IssuePropose.AsObject;
-    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: IssuePropose, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): IssuePropose;
-    static deserializeBinaryFromReader(message: IssuePropose, reader: jspb.BinaryReader): IssuePropose;
-  }
-
-  export namespace IssuePropose {
     export type AsObject = {
-      credDefId: string,
-      valuesJson: string,
-    }
-  }
-
-  export class ProofVerify extends jspb.Message {
-    clearAttrsList(): void;
-    getAttrsList(): Array<Notification.ProofVerify.Attr>;
-    setAttrsList(value: Array<Notification.ProofVerify.Attr>): void;
-    addAttrs(value?: Notification.ProofVerify.Attr, index?: number): Notification.ProofVerify.Attr;
-
-    serializeBinary(): Uint8Array;
-    toObject(includeInstance?: boolean): ProofVerify.AsObject;
-    static toObject(includeInstance: boolean, msg: ProofVerify): ProofVerify.AsObject;
-    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-    static serializeBinaryToWriter(message: ProofVerify, writer: jspb.BinaryWriter): void;
-    static deserializeBinary(bytes: Uint8Array): ProofVerify;
-    static deserializeBinaryFromReader(message: ProofVerify, reader: jspb.BinaryReader): ProofVerify;
-  }
-
-  export namespace ProofVerify {
-    export type AsObject = {
-      attrsList: Array<Notification.ProofVerify.Attr.AsObject>,
+        typeid: Notification.Type,
+        id: string,
+        connectionid: string,
+        protocolid: string,
+        protocolFamily: string,
+        timestamp: number,
+        protocolType: protocol_pb.Protocol.Type,
+        role: protocol_pb.Protocol.Role,
+        pid: string,
     }
 
-    export class Attr extends jspb.Message {
-      getValue(): string;
-      setValue(value: string): void;
-
-      getName(): string;
-      setName(value: string): void;
-
-      getCredDefId(): string;
-      setCredDefId(value: string): void;
-
-      getPredicate(): string;
-      setPredicate(value: string): void;
-
-      serializeBinary(): Uint8Array;
-      toObject(includeInstance?: boolean): Attr.AsObject;
-      static toObject(includeInstance: boolean, msg: Attr): Attr.AsObject;
-      static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
-      static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
-      static serializeBinaryToWriter(message: Attr, writer: jspb.BinaryWriter): void;
-      static deserializeBinary(bytes: Uint8Array): Attr;
-      static deserializeBinaryFromReader(message: Attr, reader: jspb.BinaryReader): Attr;
+    export enum Type {
+    NONE = 0,
+    KEEPALIVE = 1,
+    STATUS_UPDATE = 2,
+    PROTOCOL_PAUSED = 3,
     }
 
-    export namespace Attr {
-      export type AsObject = {
-        value: string,
-        name: string,
-        credDefId: string,
-        predicate: string,
-      }
-    }
-  }
-
-  export interface TypeMap {
-    STATUS_UPDATE: 0;
-    ACTION_NEEDED: 1;
-    ANSWER_NEEDED_PING: 2;
-    ANSWER_NEEDED_ISSUE_PROPOSE: 3;
-    ANSWER_NEEDED_PROOF_PROPOSE: 4;
-    ANSWER_NEEDED_PROOF_VERIFY: 5;
-    KEEPALIVE: 6;
-  }
-
-  export const Type: TypeMap;
-
-  export enum QuestionCase {
-    QUESTION_NOT_SET = 0,
-    ISSUE_PROPOSE = 10,
-    PROOF_VERIFY = 11,
-  }
 }
 
+export class Question extends jspb.Message { 
+
+    hasStatus(): boolean;
+    clearStatus(): void;
+    getStatus(): AgentStatus | undefined;
+    setStatus(value?: AgentStatus): Question;
+    getTypeid(): Question.Type;
+    setTypeid(value: Question.Type): Question;
+
+    hasIssuePropose(): boolean;
+    clearIssuePropose(): void;
+    getIssuePropose(): Question.IssueProposeMsg | undefined;
+    setIssuePropose(value?: Question.IssueProposeMsg): Question;
+
+    hasProofVerify(): boolean;
+    clearProofVerify(): void;
+    getProofVerify(): Question.ProofVerifyMsg | undefined;
+    setProofVerify(value?: Question.ProofVerifyMsg): Question;
+
+    getQuestionCase(): Question.QuestionCase;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): Question.AsObject;
+    static toObject(includeInstance: boolean, msg: Question): Question.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: Question, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): Question;
+    static deserializeBinaryFromReader(message: Question, reader: jspb.BinaryReader): Question;
+}
+
+export namespace Question {
+    export type AsObject = {
+        status?: AgentStatus.AsObject,
+        typeid: Question.Type,
+        issuePropose?: Question.IssueProposeMsg.AsObject,
+        proofVerify?: Question.ProofVerifyMsg.AsObject,
+    }
+
+
+    export class IssueProposeMsg extends jspb.Message { 
+        getCredDefid(): string;
+        setCredDefid(value: string): IssueProposeMsg;
+        getValuesjson(): string;
+        setValuesjson(value: string): IssueProposeMsg;
+
+        serializeBinary(): Uint8Array;
+        toObject(includeInstance?: boolean): IssueProposeMsg.AsObject;
+        static toObject(includeInstance: boolean, msg: IssueProposeMsg): IssueProposeMsg.AsObject;
+        static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+        static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+        static serializeBinaryToWriter(message: IssueProposeMsg, writer: jspb.BinaryWriter): void;
+        static deserializeBinary(bytes: Uint8Array): IssueProposeMsg;
+        static deserializeBinaryFromReader(message: IssueProposeMsg, reader: jspb.BinaryReader): IssueProposeMsg;
+    }
+
+    export namespace IssueProposeMsg {
+        export type AsObject = {
+            credDefid: string,
+            valuesjson: string,
+        }
+    }
+
+    export class ProofVerifyMsg extends jspb.Message { 
+        clearAttributesList(): void;
+        getAttributesList(): Array<Question.ProofVerifyMsg.Attribute>;
+        setAttributesList(value: Array<Question.ProofVerifyMsg.Attribute>): ProofVerifyMsg;
+        addAttributes(value?: Question.ProofVerifyMsg.Attribute, index?: number): Question.ProofVerifyMsg.Attribute;
+
+        serializeBinary(): Uint8Array;
+        toObject(includeInstance?: boolean): ProofVerifyMsg.AsObject;
+        static toObject(includeInstance: boolean, msg: ProofVerifyMsg): ProofVerifyMsg.AsObject;
+        static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+        static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+        static serializeBinaryToWriter(message: ProofVerifyMsg, writer: jspb.BinaryWriter): void;
+        static deserializeBinary(bytes: Uint8Array): ProofVerifyMsg;
+        static deserializeBinaryFromReader(message: ProofVerifyMsg, reader: jspb.BinaryReader): ProofVerifyMsg;
+    }
+
+    export namespace ProofVerifyMsg {
+        export type AsObject = {
+            attributesList: Array<Question.ProofVerifyMsg.Attribute.AsObject>,
+        }
+
+
+        export class Attribute extends jspb.Message { 
+            getValue(): string;
+            setValue(value: string): Attribute;
+            getName(): string;
+            setName(value: string): Attribute;
+            getCredDefid(): string;
+            setCredDefid(value: string): Attribute;
+
+            serializeBinary(): Uint8Array;
+            toObject(includeInstance?: boolean): Attribute.AsObject;
+            static toObject(includeInstance: boolean, msg: Attribute): Attribute.AsObject;
+            static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+            static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+            static serializeBinaryToWriter(message: Attribute, writer: jspb.BinaryWriter): void;
+            static deserializeBinary(bytes: Uint8Array): Attribute;
+            static deserializeBinaryFromReader(message: Attribute, reader: jspb.BinaryReader): Attribute;
+        }
+
+        export namespace Attribute {
+            export type AsObject = {
+                value: string,
+                name: string,
+                credDefid: string,
+            }
+        }
+
+    }
+
+
+    export enum Type {
+    NONE = 0,
+    KEEPALIVE = 1,
+    PING_WAITS = 2,
+    ISSUE_PROPOSE_WAITS = 3,
+    PROOF_PROPOSE_WAITS = 4,
+    PROOF_VERIFY_WAITS = 5,
+    }
+
+
+    export enum QuestionCase {
+        QUESTION_NOT_SET = 0,
+        ISSUE_PROPOSE = 3,
+        PROOF_VERIFY = 4,
+    }
+
+}
