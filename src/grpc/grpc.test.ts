@@ -1,11 +1,7 @@
-import { ServerCredentials, Server, loadPackageDefinition } from 'grpc';
-import { loadSync } from '@grpc/proto-loader';
-import { readFileSync } from 'fs';
-
 import grpc, { ConnectionProps } from './index';
-import { PingMsg } from '../idl/agent_pb';
+import testServer, { getToken } from './test-utils';
 
-const port = 50053;
+const port = 50052;
 
 const props: ConnectionProps = {
   serverAddress: 'localhost',
@@ -14,54 +10,23 @@ const props: ConnectionProps = {
   verifyServerIdentity: false
 };
 
-const connection = grpc(props);
+const acator = {
+  login: async () => await Promise.resolve(getToken('0s'))
+};
 
-const { start: startMock, stop: stopMock } = (() => {
-  const server = new Server();
-  const start = (): void => {
-    const pubKey = readFileSync(props.certPath);
-    const privKey = readFileSync('./tools/config/server.key');
-    const creds = ServerCredentials.createSsl(null, [
-      { private_key: privKey, cert_chain: pubKey }
-    ]);
-
-    const packageDefinition = loadSync('./idl/agent.proto');
-    const agency = loadPackageDefinition(packageDefinition).agency as any;
-    server.addService(agency.v1.AgentService.service, {
-      Listen: () => {},
-      Wait: () => {},
-      Give: () => {},
-      CreateInvitation: () => {},
-      SetImplId: () => {},
-      Ping: () => {},
-      CreateSchema: () => {},
-      CreateCredDef: () => {},
-      GetSchema: () => {},
-      GetCredDef: () => {}
-    });
-
-    server.bind(`0.0.0.0:${port}`, creds);
-    server.start();
-  };
-  const stop = (): void => {
-    server.forceShutdown();
-  };
-  return {
-    start,
-    stop
-  };
-})();
+const { start: startMock, stop: stopMock } = testServer(props);
 
 beforeAll(startMock);
 afterAll(stopMock);
 
 describe('GRPC', () => {
   it('should open connection', async () => {
+    const connection = await grpc(props, acator);
     const { createAgentClient } = connection;
-    const client = await createAgentClient(props);
+    const client = await createAgentClient();
     expect(client).toBeDefined();
 
     const res = await client.ping();
-    console.log(res);
+    expect(res).toBeDefined();
   });
 });
