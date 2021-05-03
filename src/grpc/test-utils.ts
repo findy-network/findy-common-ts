@@ -33,11 +33,12 @@ export const getToken = (expiresIn: string): string => {
 };
 
 const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
-  const header = call.metadata.get('Authorization');
+  const header = call.metadata.get('Authorization')[0] as string;
+  const prefix = 'Bearer ';
   if (
     header == null ||
-    header === [] ||
-    !(header[0] as string).startsWith('Bearer ')
+    !header.startsWith(prefix) ||
+    header.length < prefix.length + 1
   ) {
     return new Error('Unauthorized');
   }
@@ -80,7 +81,10 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<Invitation>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new Invitation());
+    const invitation = new Invitation();
+    invitation.setJson('json');
+    invitation.setUrl('url');
+    callback(err, err != null ? null : invitation);
   }
 
   setImplId(
@@ -88,7 +92,12 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<SAImplementation>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new SAImplementation());
+    const msg = new SAImplementation();
+    msg.setEndpoint(call.request.getEndpoint());
+    msg.setId(call.request.getId());
+    msg.setKey(call.request.getKey());
+    msg.setPersistent(call.request.getPersistent());
+    callback(err, err != null ? null : msg);
   }
 
   ping(
@@ -104,7 +113,9 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<Schema>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new Schema());
+    const msg = new Schema();
+    msg.setId('id');
+    callback(err, err != null ? null : msg);
   }
 
   createCredDef(
@@ -145,7 +156,10 @@ export default (
 
     server.addService(AgentServiceService, new AgentServer());
 
-    server.bindAsync(`0.0.0.0:${props.serverPort}`, creds, () => {
+    server.bindAsync(`0.0.0.0:${props.serverPort}`, creds, (err) => {
+      if (err != null) {
+        throw err;
+      }
       server.start();
     });
   };
