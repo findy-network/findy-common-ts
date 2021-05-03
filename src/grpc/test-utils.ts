@@ -3,7 +3,8 @@ import {
   Server,
   ServerUnaryCall,
   ServerWritableStream,
-  sendUnaryData
+  sendUnaryData,
+  UntypedHandleCall
 } from '@grpc/grpc-js';
 import { readFileSync } from 'fs';
 import { sign } from 'jsonwebtoken';
@@ -44,6 +45,8 @@ const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
 };
 
 class AgentServer implements IAgentServiceServer {
+  [name: string]: UntypedHandleCall;
+
   async listen(
     call: ServerWritableStream<ClientID, AgentStatus>
   ): Promise<void> {
@@ -140,7 +143,6 @@ export default (
       { private_key: privKey, cert_chain: pubKey }
     ]);
 
-    // @ts-expect-error
     server.addService(AgentServiceService, new AgentServer());
 
     server.bindAsync(`0.0.0.0:${props.serverPort}`, creds, () => {

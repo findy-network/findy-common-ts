@@ -4,7 +4,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
+import {handleClientStreamingCall} from "@grpc/grpc-js/build/src/server-call";
 import * as protocol_pb from "./protocol_pb";
 
 interface IProtocolServiceService extends grpc.ServiceDefinition<grpc.UntypedServiceImplementation> {
@@ -63,7 +64,7 @@ interface IProtocolServiceService_IRelease extends grpc.MethodDefinition<protoco
 
 export const ProtocolServiceService: IProtocolServiceService;
 
-export interface IProtocolServiceServer {
+export interface IProtocolServiceServer extends grpc.UntypedServiceImplementation {
     run: grpc.handleServerStreamingCall<protocol_pb.Protocol, protocol_pb.ProtocolState>;
     start: grpc.handleUnaryCall<protocol_pb.Protocol, protocol_pb.ProtocolID>;
     status: grpc.handleUnaryCall<protocol_pb.ProtocolID, protocol_pb.ProtocolStatus>;
@@ -89,7 +90,7 @@ export interface IProtocolServiceClient {
 }
 
 export class ProtocolServiceClient extends grpc.Client implements IProtocolServiceClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public run(request: protocol_pb.Protocol, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<protocol_pb.ProtocolState>;
     public run(request: protocol_pb.Protocol, metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<protocol_pb.ProtocolState>;
     public start(request: protocol_pb.Protocol, callback: (error: grpc.ServiceError | null, response: protocol_pb.ProtocolID) => void): grpc.ClientUnaryCall;

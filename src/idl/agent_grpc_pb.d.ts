@@ -4,7 +4,8 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import * as grpc from "grpc";
+import * as grpc from "@grpc/grpc-js";
+import {handleClientStreamingCall} from "@grpc/grpc-js/build/src/server-call";
 import * as agent_pb from "./agent_pb";
 import * as protocol_pb from "./protocol_pb";
 
@@ -114,7 +115,7 @@ interface IAgentServiceService_IGetCredDef extends grpc.MethodDefinition<agent_p
 
 export const AgentServiceService: IAgentServiceService;
 
-export interface IAgentServiceServer {
+export interface IAgentServiceServer extends grpc.UntypedServiceImplementation {
     listen: grpc.handleServerStreamingCall<agent_pb.ClientID, agent_pb.AgentStatus>;
     wait: grpc.handleServerStreamingCall<agent_pb.ClientID, agent_pb.Question>;
     give: grpc.handleUnaryCall<agent_pb.Answer, agent_pb.ClientID>;
@@ -159,7 +160,7 @@ export interface IAgentServiceClient {
 }
 
 export class AgentServiceClient extends grpc.Client implements IAgentServiceClient {
-    constructor(address: string, credentials: grpc.ChannelCredentials, options?: object);
+    constructor(address: string, credentials: grpc.ChannelCredentials, options?: Partial<grpc.ClientOptions>);
     public listen(request: agent_pb.ClientID, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<agent_pb.AgentStatus>;
     public listen(request: agent_pb.ClientID, metadata?: grpc.Metadata, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<agent_pb.AgentStatus>;
     public wait(request: agent_pb.ClientID, options?: Partial<grpc.CallOptions>): grpc.ClientReadableStream<agent_pb.Question>;
