@@ -73,7 +73,9 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<ClientID>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new ClientID());
+    const msg = new ClientID();
+    msg.setId('id');
+    callback(err, err != null ? null : msg);
   }
 
   createInvitation(
@@ -123,7 +125,9 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<CredDef>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new CredDef());
+    const msg = new CredDef();
+    msg.setId('id');
+    callback(err, err != null ? null : msg);
   }
 
   getSchema(
@@ -131,7 +135,10 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<SchemaData>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new SchemaData());
+    const msg = new SchemaData();
+    msg.setId('id');
+    msg.setData('data');
+    callback(err, err != null ? null : msg);
   }
 
   getCredDef(
@@ -139,7 +146,10 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<CredDefData>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new CredDefData());
+    const msg = new CredDefData();
+    msg.setId('id');
+    msg.setData('data');
+    callback(err, err != null ? null : msg);
   }
 }
 

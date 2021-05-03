@@ -1,6 +1,11 @@
 import {
+  Answer,
+  ClientID,
+  CredDef,
+  CredDefCreate,
   InvitationBase,
   SAImplementation,
+  Schema,
   SchemaCreate
 } from '../idl/agent_pb';
 import { Agent } from './agent';
@@ -41,6 +46,19 @@ describe('GRPC', () => {
     const res = await client.ping();
     expect(res).toBeDefined();
   });
+  it('should give answer', async () => {
+    const clientID = new ClientID();
+    clientID.setId('id');
+    const msg = new Answer();
+    msg.setId('id');
+    msg.setAck(true);
+    msg.setClientid(clientID);
+    msg.setInfo('info');
+
+    const res = await client.give(msg);
+    expect(res).toBeDefined();
+    expect(res.getId()).not.toEqual('');
+  });
   it('should create invitation', async () => {
     const invitation = new InvitationBase();
     invitation.setExpiration(1);
@@ -75,5 +93,32 @@ describe('GRPC', () => {
     const res = await client.createSchema(msg);
     expect(res).toBeDefined();
     expect(res.getId()).not.toEqual('');
+  });
+  it('should create cred def', async () => {
+    const msg = new CredDefCreate();
+    msg.setSchemaid('id');
+    msg.setTag('tag');
+
+    const res = await client.createCredDef(msg);
+    expect(res).toBeDefined();
+    expect(res.getId()).not.toEqual('');
+  });
+  it('should get schema', async () => {
+    const msg = new Schema();
+    msg.setId('id');
+
+    const res = await client.getSchema(msg);
+    expect(res).toBeDefined();
+    expect(res.getId()).not.toEqual('');
+    expect(res.getData()).not.toEqual('');
+  });
+  it('should get cred def', async () => {
+    const msg = new CredDef();
+    msg.setId('id');
+
+    const res = await client.getCredDef(msg);
+    expect(res).toBeDefined();
+    expect(res.getId()).not.toEqual('');
+    expect(res.getData()).not.toEqual('');
   });
 });
