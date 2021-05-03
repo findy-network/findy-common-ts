@@ -2,10 +2,14 @@ import { exec as execCmd, ExecException } from 'child_process';
 
 import log from '../log';
 
-interface AcatorProps {
+export interface AcatorProps {
   authUrl: string;
   userName: string;
   key: string;
+}
+
+export interface Acator {
+  login: () => Promise<string>;
 }
 
 const doExec = async (cmd: string): Promise<string> => {
@@ -26,7 +30,7 @@ const doExec = async (cmd: string): Promise<string> => {
 export default (
   { authUrl, userName, key }: AcatorProps,
   exec = doExec
-): { login: () => Promise<string> } => {
+): Acator => {
   // TODO: counter and guid for production setup
   const config: { [key: string]: string } = {
     url: authUrl,
@@ -55,7 +59,7 @@ export default (
       const jwtToken = await exec(loginCmd);
 
       log.info('Agent login succeeded after registration!');
-      return jwtToken;
+      return jwtToken.trim();
     }
   };
 
