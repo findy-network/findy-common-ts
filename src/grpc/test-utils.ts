@@ -18,6 +18,7 @@ import {
   CredDefData,
   Invitation,
   InvitationBase,
+  Notification,
   PingMsg,
   Question,
   SAImplementation,
@@ -27,6 +28,16 @@ import {
 } from '../idl/agent_pb';
 import { AgentServiceService, IAgentServiceServer } from '../idl/agent_grpc_pb';
 import { ConnectionProps } from './index';
+import {
+  Protocol,
+  ProtocolID,
+  ProtocolState,
+  ProtocolStatus
+} from '../idl/protocol_pb';
+import {
+  IProtocolServiceServer,
+  ProtocolServiceService
+} from '../idl/protocol_grpc_pb';
 
 export const getToken = (expiresIn: string): string => {
   return sign({ un: 'minnie' }, 'whatever', { expiresIn });
@@ -45,6 +56,28 @@ const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
   return null;
 };
 
+let listenErrorSent = false;
+let waitErrorSent = false;
+
+const getStatus = (clientId: ClientID): AgentStatus => {
+  const notification = new Notification();
+  notification.setConnectionid('connectionId');
+  notification.setId('id');
+  notification.setPid('pid');
+  notification.setProtocolFamily('family');
+  notification.setProtocolType(Protocol.Type.PRESENT_PROOF);
+  notification.setProtocolid('protocolId');
+  notification.setRole(Protocol.Role.INITIATOR);
+  notification.setTimestamp(123);
+  notification.setTypeid(Notification.Type.PROTOCOL_PAUSED);
+
+  const status = new AgentStatus();
+  status.setClientid(clientId);
+  status.setNotification(notification);
+
+  return status;
+};
+
 class AgentServer implements IAgentServiceServer {
   [name: string]: UntypedHandleCall;
 
@@ -53,18 +86,45 @@ class AgentServer implements IAgentServiceServer {
   ): Promise<void> {
     const err = doAuth(call);
 
-    // TODO
+    const msg = getStatus(call.request);
+
     if (err == null) {
-      call.write(new AgentStatus());
+      if (call.request.getId().startsWith('error') && !listenErrorSent) {
+        const err = new Error('error');
+        call.emit('error', err);
+        listenErrorSent = true;
+      } else {
+        call.write(msg);
+      }
     }
   }
 
   async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {
     const err = doAuth(call);
 
-    // TODO
+    const status = getStatus(call.request);
+
+    const attr = new Question.ProofVerifyMsg.Attribute();
+    attr.setCredDefid('credDefId');
+    attr.setName('name');
+    attr.setValue('value');
+
+    const question = new Question.ProofVerifyMsg();
+    question.setAttributesList([attr]);
+
+    const msg = new Question();
+    msg.setTypeid(Question.Type.PROOF_VERIFY_WAITS);
+    msg.setStatus(status);
+    msg.setProofVerify(question);
+
     if (err == null) {
-      call.write(new Question());
+      if (call.request.getId().startsWith('error') && !waitErrorSent) {
+        const err = new Error('error');
+        call.emit('error', err);
+        waitErrorSent = true;
+      } else {
+        call.write(msg);
+      }
     }
   }
 
@@ -73,7 +133,9 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<ClientID>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new ClientID());
+    const msg = new ClientID();
+    msg.setId('id');
+    callback(err, err != null ? null : msg);
   }
 
   createInvitation(
@@ -123,7 +185,9 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<CredDef>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new CredDef());
+    const msg = new CredDef();
+    msg.setId('id');
+    callback(err, err != null ? null : msg);
   }
 
   getSchema(
@@ -131,7 +195,10 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<SchemaData>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new SchemaData());
+    const msg = new SchemaData();
+    msg.setId('id');
+    msg.setData('data');
+    callback(err, err != null ? null : msg);
   }
 
   getCredDef(
@@ -139,7 +206,62 @@ class AgentServer implements IAgentServiceServer {
     callback: sendUnaryData<CredDefData>
   ): void {
     const err = doAuth(call);
-    callback(err, err != null ? null : new CredDefData());
+    const msg = new CredDefData();
+    msg.setId('id');
+    msg.setData('data');
+    callback(err, err != null ? null : msg);
+  }
+}
+
+class ProtocolServer implements IProtocolServiceServer {
+  [name: string]: UntypedHandleCall;
+  run(call: ServerWritableStream<Protocol, ProtocolState>): void {
+    doAuth(call);
+    // TODO:
+  }
+
+  start(
+    call: ServerUnaryCall<Protocol, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    const msg = new ProtocolID();
+    msg.setId('id');
+    msg.setNotificationTime(123);
+    msg.setRole(Protocol.Role.INITIATOR);
+    msg.setTypeid(Protocol.Type.PRESENT_PROOF);
+    callback(err, err != null ? null : msg);
+  }
+
+  status(
+    call: ServerUnaryCall<ProtocolID, ProtocolStatus>,
+    callback: sendUnaryData<ProtocolStatus>
+  ): void {
+    const err = doAuth(call);
+    const state = new ProtocolState();
+    state.setInfo('info');
+    state.setProtocolid(call.request);
+    state.setState(ProtocolState.State.OK);
+    const msg = new ProtocolStatus();
+    msg.setTimestamp(123);
+    msg.setState(state);
+    callback(err, err != null ? null : msg);
+  }
+
+  resume(
+    call: ServerUnaryCall<ProtocolState, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    callback(err, err != null ? null : call.request.getProtocolid());
+  }
+
+  release(
+    call: ServerUnaryCall<ProtocolID, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    callback(err, err != null ? null : call.request);
   }
 }
 
@@ -155,6 +277,7 @@ export default (
     ]);
 
     server.addService(AgentServiceService, new AgentServer());
+    server.addService(ProtocolServiceService, new ProtocolServer());
 
     server.bindAsync(`0.0.0.0:${props.serverPort}`, creds, (err) => {
       if (err != null) {

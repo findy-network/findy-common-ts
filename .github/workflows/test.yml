@@ -1,5 +1,7 @@
 name: test
 on: push
+env:
+  FINDY_CTS_RETRY_TIMEOUT_SECS: 1
 jobs:
   build:
     runs-on: ubuntu-latest
