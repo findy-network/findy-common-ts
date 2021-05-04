@@ -286,8 +286,11 @@ export default (
       server.start();
     });
   };
-  const stop = (): void => {
-    server.forceShutdown();
+  const stop = async (): Promise<void> => {
+    return await new Promise((resolve) => {
+      server.tryShutdown(() => resolve());
+      server.forceShutdown();
+    });
   };
   return {
     start,

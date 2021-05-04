@@ -35,18 +35,16 @@ const { start: startMock, stop: stopMock } = testServer(props);
 let agentClient: AgentClient;
 let protocolClient: ProtocolClient;
 
-beforeAll(async () => {
-  stopMock();
-  startMock();
-
-  const connection = await grpc(props, acator);
-  const { createAgentClient, createProtocolClient } = connection;
-  agentClient = await createAgentClient();
-  protocolClient = await createProtocolClient();
-});
-afterAll(stopMock);
-
 describe('GRPC', () => {
+  beforeAll(async () => {
+    startMock();
+
+    const connection = await grpc(props, acator);
+    const { createAgentClient, createProtocolClient } = connection;
+    agentClient = await createAgentClient();
+    protocolClient = await createProtocolClient();
+  });
+
   describe('Agent', () => {
     it('should open connection', async () => {
       expect(agentClient).toBeDefined();
@@ -235,5 +233,8 @@ describe('GRPC', () => {
       const res = await protocolClient.release(protocol);
       expect(res).toEqual(protocol);
     });
+  });
+  afterAll(async () => {
+    await stopMock();
   });
 });
