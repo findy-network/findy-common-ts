@@ -19,6 +19,8 @@ import log from '../log';
 import { MetaProvider } from './metadata';
 
 export interface Agent {
+  // startListening(msg: ClientID, handler: () => void): Promise<ClientID>;
+  // startWaiting(msg: ClientID, handler: () => void): Promise<ClientID>;
   give: (msg: Answer) => Promise<ClientID>;
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
   setImplId: (msg: SAImplementation) => Promise<SAImplementation>;
