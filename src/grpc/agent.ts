@@ -1,3 +1,4 @@
+import { closeClient } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 import {
   Answer,
@@ -39,6 +40,7 @@ export interface AgentClient {
   createCredDef: (msg: CredDefCreate) => Promise<CredDefData>;
   getSchema: (msg: Schema) => Promise<SchemaData>;
   getCredDef: (msg: CredDef) => Promise<CredDefData>;
+  close: () => void;
 }
 
 export default async (
@@ -181,6 +183,10 @@ export default async (
     });
   };
 
+  const close = (): void => {
+    closeClient(client);
+  };
+
   return {
     startListening,
     startWaiting,
@@ -191,6 +197,7 @@ export default async (
     createSchema,
     createCredDef,
     getSchema,
-    getCredDef
+    getCredDef,
+    close
   };
 };

@@ -90,25 +90,6 @@ describe('GRPC', () => {
       const resClientId = res.getClientid() ?? new ClientID();
       expect(resClientId.getId()).toEqual(clientID.getId());
     });
-    it('should wait for questions after error', async () => {
-      const clientID = new ClientID();
-      clientID.setId('errorid');
-
-      const question = await new Promise<Question>((resolve) => {
-        agentClient
-          .startWaiting(clientID, (q: Question) => {
-            resolve(q);
-          })
-          .then(
-            () => {},
-            () => {}
-          );
-      });
-      const res = question.getStatus() ?? new AgentStatus();
-      expect(res).toBeDefined();
-      const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
-    });
     it('should give answer', async () => {
       const clientID = new ClientID();
       clientID.setId('id');
@@ -235,6 +216,8 @@ describe('GRPC', () => {
     });
   });
   afterAll(async () => {
+    agentClient.close();
+    protocolClient.close();
     await stopMock();
   });
 });

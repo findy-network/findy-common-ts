@@ -1,3 +1,4 @@
+import { closeClient } from '@grpc/grpc-js';
 import { ProtocolServiceClient } from '../idl/protocol_grpc_pb';
 import {
   Protocol,
@@ -15,6 +16,7 @@ export interface ProtocolClient {
   status: (msg: ProtocolID) => Promise<ProtocolStatus>;
   resume: (msg: ProtocolState) => Promise<ProtocolID>;
   release: (msg: ProtocolID) => Promise<ProtocolID>;
+  close: () => void;
 }
 
 export default async (
@@ -45,11 +47,15 @@ export default async (
       client.release(msg, meta, unaryHandler('release', resolve, reject));
     });
   };
+  const close = (): void => {
+    closeClient(client);
+  };
 
   return {
     start,
     status,
     resume,
-    release
+    release,
+    close
   };
 };
