@@ -1,8 +1,10 @@
 import fs from 'fs';
 import { credentials, ChannelCredentials } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
+import { ProtocolServiceClient } from '../idl/protocol_grpc_pb';
 
 import agentClient, { AgentClient } from './agent';
+import protocolClient, { ProtocolClient } from './protocol';
 import { Acator } from '../acator';
 import metaProvider from './metadata';
 
@@ -15,6 +17,7 @@ export interface ConnectionProps {
 
 export interface Connection {
   createAgentClient: () => Promise<AgentClient>;
+  createProtocolClient: () => Promise<ProtocolClient>;
 }
 
 export default async (
@@ -46,7 +49,17 @@ export default async (
     return await agentClient(client, meta);
   };
 
+  const createProtocolClient = async (): Promise<ProtocolClient> => {
+    const creds = getChannelCreds();
+    const client = new ProtocolServiceClient(
+      `${serverAddress}:${serverPort}`,
+      creds
+    );
+    return await protocolClient(client, meta);
+  };
+
   return {
-    createAgentClient
+    createAgentClient,
+    createProtocolClient
   };
 };

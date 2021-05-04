@@ -28,7 +28,16 @@ import {
 } from '../idl/agent_pb';
 import { AgentServiceService, IAgentServiceServer } from '../idl/agent_grpc_pb';
 import { ConnectionProps } from './index';
-import { Protocol } from '../idl/protocol_pb';
+import {
+  Protocol,
+  ProtocolID,
+  ProtocolState,
+  ProtocolStatus
+} from '../idl/protocol_pb';
+import {
+  IProtocolServiceServer,
+  ProtocolServiceService
+} from '../idl/protocol_grpc_pb';
 
 export const getToken = (expiresIn: string): string => {
   return sign({ un: 'minnie' }, 'whatever', { expiresIn });
@@ -204,6 +213,58 @@ class AgentServer implements IAgentServiceServer {
   }
 }
 
+class ProtocolServer implements IProtocolServiceServer {
+  [name: string]: UntypedHandleCall;
+  run(call: ServerWritableStream<Protocol, ProtocolState>): void {
+    doAuth(call);
+    // TODO:
+  }
+
+  start(
+    call: ServerUnaryCall<Protocol, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    const msg = new ProtocolID();
+    msg.setId('id');
+    msg.setNotificationTime(123);
+    msg.setRole(Protocol.Role.INITIATOR);
+    msg.setTypeid(Protocol.Type.PRESENT_PROOF);
+    callback(err, err != null ? null : msg);
+  }
+
+  status(
+    call: ServerUnaryCall<ProtocolID, ProtocolStatus>,
+    callback: sendUnaryData<ProtocolStatus>
+  ): void {
+    const err = doAuth(call);
+    const state = new ProtocolState();
+    state.setInfo('info');
+    state.setProtocolid(call.request);
+    state.setState(ProtocolState.State.OK);
+    const msg = new ProtocolStatus();
+    msg.setTimestamp(123);
+    msg.setState(state);
+    callback(err, err != null ? null : msg);
+  }
+
+  resume(
+    call: ServerUnaryCall<ProtocolState, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    callback(err, err != null ? null : call.request.getProtocolid());
+  }
+
+  release(
+    call: ServerUnaryCall<ProtocolID, ProtocolID>,
+    callback: sendUnaryData<ProtocolID>
+  ): void {
+    const err = doAuth(call);
+    callback(err, err != null ? null : call.request);
+  }
+}
+
 export default (
   props: ConnectionProps
 ): { start: () => void; stop: () => void } => {
@@ -216,6 +277,7 @@ export default (
     ]);
 
     server.addService(AgentServiceService, new AgentServer());
+    server.addService(ProtocolServiceService, new ProtocolServer());
 
     server.bindAsync(`0.0.0.0:${props.serverPort}`, creds, (err) => {
       if (err != null) {

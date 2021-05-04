@@ -12,8 +12,10 @@ import {
   SchemaCreate
 } from '../idl/agent_pb';
 import { AgentClient } from './agent';
+import { ProtocolClient } from './protocol';
 import grpc, { ConnectionProps } from './index';
 import testServer, { getToken } from './test-utils';
+import { Protocol, ProtocolID, ProtocolState } from '../idl/protocol_pb';
 
 const port = 50052;
 
@@ -30,24 +32,26 @@ const acator = {
 
 const { start: startMock, stop: stopMock } = testServer(props);
 
-let client: AgentClient;
+let agentClient: AgentClient;
+let protocolClient: ProtocolClient;
 
 beforeAll(async () => {
   stopMock();
   startMock();
 
   const connection = await grpc(props, acator);
-  const { createAgentClient } = connection;
-  client = await createAgentClient();
+  const { createAgentClient, createProtocolClient } = connection;
+  agentClient = await createAgentClient();
+  protocolClient = await createProtocolClient();
 });
 afterAll(stopMock);
 
 describe('GRPC', () => {
   describe('Agent', () => {
     it('should open connection', async () => {
-      expect(client).toBeDefined();
+      expect(agentClient).toBeDefined();
 
-      const res = await client.ping();
+      const res = await agentClient.ping();
       expect(res).toBeDefined();
     });
     it('should listen for status', async () => {
@@ -55,7 +59,7 @@ describe('GRPC', () => {
       clientID.setId('id');
 
       const status = await new Promise<AgentStatus>((resolve) => {
-        client
+        agentClient
           .startListening(clientID, (s: AgentStatus) => {
             resolve(s);
           })
@@ -74,7 +78,7 @@ describe('GRPC', () => {
       clientID.setId('id');
 
       const question = await new Promise<Question>((resolve) => {
-        client
+        agentClient
           .startWaiting(clientID, (q: Question) => {
             resolve(q);
           })
@@ -93,7 +97,7 @@ describe('GRPC', () => {
       clientID.setId('errorid');
 
       const question = await new Promise<Question>((resolve) => {
-        client
+        agentClient
           .startWaiting(clientID, (q: Question) => {
             resolve(q);
           })
@@ -116,7 +120,7 @@ describe('GRPC', () => {
       msg.setClientid(clientID);
       msg.setInfo('info');
 
-      const res = await client.give(msg);
+      const res = await agentClient.give(msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
     });
@@ -126,7 +130,7 @@ describe('GRPC', () => {
       invitation.setId('id');
       invitation.setLabel('label');
 
-      const res = await client.createInvitation(invitation);
+      const res = await agentClient.createInvitation(invitation);
       expect(res).toBeDefined();
       expect(res.getJson()).not.toEqual('');
       expect(res.getUrl()).not.toEqual('');
@@ -138,7 +142,7 @@ describe('GRPC', () => {
       msg.setKey('key');
       msg.setPersistent(true);
 
-      const res = await client.setImplId(msg);
+      const res = await agentClient.setImplId(msg);
       expect(res).toBeDefined();
       expect(res.getEndpoint()).toEqual(msg.getEndpoint());
       expect(res.getId()).toEqual(msg.getId());
@@ -151,7 +155,7 @@ describe('GRPC', () => {
       msg.setVersion('1.0');
       msg.setAttributesList(['attr1']);
 
-      const res = await client.createSchema(msg);
+      const res = await agentClient.createSchema(msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
     });
@@ -160,7 +164,7 @@ describe('GRPC', () => {
       msg.setSchemaid('id');
       msg.setTag('tag');
 
-      const res = await client.createCredDef(msg);
+      const res = await agentClient.createCredDef(msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
     });
@@ -168,7 +172,7 @@ describe('GRPC', () => {
       const msg = new Schema();
       msg.setId('id');
 
-      const res = await client.getSchema(msg);
+      const res = await agentClient.getSchema(msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
       expect(res.getData()).not.toEqual('');
@@ -177,11 +181,59 @@ describe('GRPC', () => {
       const msg = new CredDef();
       msg.setId('id');
 
-      const res = await client.getCredDef(msg);
+      const res = await agentClient.getCredDef(msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
       expect(res.getData()).not.toEqual('');
     });
   });
-  describe('Protocol', () => {});
+  describe('Protocol', () => {
+    it('should start protocol', async () => {
+      const msg = new Protocol.BasicMessageMsg();
+      msg.setContent('content');
+
+      const protocol = new Protocol();
+      protocol.setTypeid(Protocol.Type.BASIC_MESSAGE);
+      protocol.setRole(Protocol.Role.INITIATOR);
+      protocol.setBasicMessage(msg);
+
+      const res = await protocolClient.start(protocol);
+      expect(res).toBeDefined();
+      expect(res.getId()).not.toEqual('');
+      expect(res.getRole()).not.toEqual('');
+      expect(res.getTypeid()).not.toEqual('');
+    });
+    it('should fetch protocol status', async () => {
+      const protocol = new ProtocolID();
+      protocol.setTypeid(Protocol.Type.BASIC_MESSAGE);
+      protocol.setRole(Protocol.Role.INITIATOR);
+      protocol.setId('id');
+
+      const res = await protocolClient.status(protocol);
+      const status = res.getState() ?? new ProtocolState();
+      expect(res).toBeDefined();
+      expect(status.getProtocolid()).toEqual(protocol);
+    });
+    it('should resume protocol', async () => {
+      const protocol = new ProtocolID();
+      protocol.setTypeid(Protocol.Type.PRESENT_PROOF);
+      protocol.setRole(Protocol.Role.RESUMER);
+      protocol.setId('id');
+
+      const msg = new ProtocolState();
+      msg.setProtocolid(protocol);
+
+      const res = await protocolClient.resume(msg);
+      expect(res).toEqual(protocol);
+    });
+    it('should release protocol', async () => {
+      const protocol = new ProtocolID();
+      protocol.setTypeid(Protocol.Type.PRESENT_PROOF);
+      protocol.setRole(Protocol.Role.RESUMER);
+      protocol.setId('id');
+
+      const res = await protocolClient.release(protocol);
+      expect(res).toEqual(protocol);
+    });
+  });
 });
