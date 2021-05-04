@@ -2,7 +2,7 @@ import fs from 'fs';
 import { credentials, ChannelCredentials } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 
-import agentClient, { Agent } from './agent';
+import agentClient, { AgentClient } from './agent';
 import { Acator } from '../acator';
 import metaProvider from './metadata';
 
@@ -14,7 +14,7 @@ export interface ConnectionProps {
 }
 
 export interface Connection {
-  createAgentClient: () => Promise<Agent>;
+  createAgentClient: () => Promise<AgentClient>;
 }
 
 export default async (
@@ -37,7 +37,7 @@ export default async (
     return credentials.createSsl(...args);
   };
 
-  const createAgentClient = async (): Promise<Agent> => {
+  const createAgentClient = async (): Promise<AgentClient> => {
     const creds = getChannelCreds();
     const client = new AgentServiceClient(
       `${serverAddress}:${serverPort}`,

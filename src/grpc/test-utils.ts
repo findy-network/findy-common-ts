@@ -18,6 +18,7 @@ import {
   CredDefData,
   Invitation,
   InvitationBase,
+  Notification,
   PingMsg,
   Question,
   SAImplementation,
@@ -27,6 +28,7 @@ import {
 } from '../idl/agent_pb';
 import { AgentServiceService, IAgentServiceServer } from '../idl/agent_grpc_pb';
 import { ConnectionProps } from './index';
+import { Protocol } from '../idl/protocol_pb';
 
 export const getToken = (expiresIn: string): string => {
   return sign({ un: 'minnie' }, 'whatever', { expiresIn });
@@ -45,6 +47,28 @@ const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
   return null;
 };
 
+let listenErrorSent = false;
+let waitErrorSent = false;
+
+const getStatus = (clientId: ClientID): AgentStatus => {
+  const notification = new Notification();
+  notification.setConnectionid('connectionId');
+  notification.setId('id');
+  notification.setPid('pid');
+  notification.setProtocolFamily('family');
+  notification.setProtocolType(Protocol.Type.PRESENT_PROOF);
+  notification.setProtocolid('protocolId');
+  notification.setRole(Protocol.Role.INITIATOR);
+  notification.setTimestamp(123);
+  notification.setTypeid(Notification.Type.PROTOCOL_PAUSED);
+
+  const status = new AgentStatus();
+  status.setClientid(clientId);
+  status.setNotification(notification);
+
+  return status;
+};
+
 class AgentServer implements IAgentServiceServer {
   [name: string]: UntypedHandleCall;
 
@@ -53,18 +77,45 @@ class AgentServer implements IAgentServiceServer {
   ): Promise<void> {
     const err = doAuth(call);
 
-    // TODO
+    const msg = getStatus(call.request);
+
     if (err == null) {
-      call.write(new AgentStatus());
+      if (call.request.getId().startsWith('error') && !listenErrorSent) {
+        const err = new Error('error');
+        call.emit('error', err);
+        listenErrorSent = true;
+      } else {
+        call.write(msg);
+      }
     }
   }
 
   async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {
     const err = doAuth(call);
 
-    // TODO
+    const status = getStatus(call.request);
+
+    const attr = new Question.ProofVerifyMsg.Attribute();
+    attr.setCredDefid('credDefId');
+    attr.setName('name');
+    attr.setValue('value');
+
+    const question = new Question.ProofVerifyMsg();
+    question.setAttributesList([attr]);
+
+    const msg = new Question();
+    msg.setTypeid(Question.Type.PROOF_VERIFY_WAITS);
+    msg.setStatus(status);
+    msg.setProofVerify(question);
+
     if (err == null) {
-      call.write(new Question());
+      if (call.request.getId().startsWith('error') && !waitErrorSent) {
+        const err = new Error('error');
+        call.emit('error', err);
+        waitErrorSent = true;
+      } else {
+        call.write(msg);
+      }
     }
   }
 

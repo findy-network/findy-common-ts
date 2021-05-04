@@ -1,4 +1,3 @@
-import { ServiceError } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 import {
   Answer,
@@ -12,15 +11,26 @@ import {
   SAImplementation,
   SchemaCreate,
   Schema,
-  SchemaData
+  SchemaData,
+  Question,
+  AgentStatus
 } from '../idl/agent_pb';
 
 import log from '../log';
 import { MetaProvider } from './metadata';
+import { unaryHandler } from './utils';
 
-export interface Agent {
-  // startListening(msg: ClientID, handler: () => void): Promise<ClientID>;
-  // startWaiting(msg: ClientID, handler: () => void): Promise<ClientID>;
+const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
+
+export interface AgentClient {
+  startListening: (
+    msg: ClientID,
+    handleStatus: (status: AgentStatus) => void
+  ) => Promise<ClientID>;
+  startWaiting: (
+    msg: ClientID,
+    handleQuestion: (question: Question) => void
+  ) => Promise<ClientID>;
   give: (msg: Answer) => Promise<ClientID>;
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
   setImplId: (msg: SAImplementation) => Promise<SAImplementation>;
@@ -34,29 +44,77 @@ export interface Agent {
 export default async (
   client: AgentServiceClient,
   { getMeta }: MetaProvider
-): Promise<Agent> => {
-  const handler = (
-    name: string,
-    resolve: (res: any) => void,
-    reject: (err: any) => void
-  ) => (err: ServiceError | null, res: any): void => {
-    log.debug(
-      `${name} response ${JSON.stringify(res.toObject())} ${
-        err != null ? `, err ${JSON.stringify(err)}` : ''
-      }`
-    );
-    if (err != null) {
-      log.error(`GRPC error ${JSON.stringify(err)}`);
-      reject(err);
-    } else {
-      resolve(res);
-    }
+): Promise<AgentClient> => {
+  const startListening = async (
+    msg: ClientID,
+    handleStatus: (status: AgentStatus) => void,
+    retryCount: number = 0
+  ): Promise<ClientID> => {
+    const meta = await getMeta();
+    const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
+    return await new Promise((resolve) => {
+      const stream = client.listen(msg, meta);
+      let newCount = retryCount;
+      const waitAndRetry = (): NodeJS.Timeout =>
+        setTimeout(() => {
+          startListening(msg, handleStatus, newCount + 1).then(
+            () => log.debug('Listening started'),
+            () => {}
+          );
+        }, timeout);
+
+      stream.on('data', (status: AgentStatus) => {
+        newCount = 0;
+        handleStatus(status);
+      });
+      stream.on('error', (err) => {
+        log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+      });
+      stream.on('end', () => {
+        log.error(`Streaming ended when listening. Retry...`);
+        waitAndRetry();
+      });
+      resolve(msg);
+    });
+  };
+
+  const startWaiting = async (
+    msg: ClientID,
+    handleQuestion: (question: Question) => void,
+    retryCount: number = 0
+  ): Promise<ClientID> => {
+    const meta = await getMeta();
+    const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
+    return await new Promise((resolve) => {
+      const stream = client.wait(msg, meta);
+      let newCount = retryCount;
+      const waitAndRetry = (): NodeJS.Timeout =>
+        setTimeout(() => {
+          startWaiting(msg, handleQuestion, newCount + 1).then(
+            () => log.debug('Waiting started'),
+            () => {}
+          );
+        }, timeout);
+
+      stream.on('data', (question: Question) => {
+        newCount = 0;
+        handleQuestion(question);
+      });
+      stream.on('error', (err) => {
+        log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+      });
+      stream.on('end', () => {
+        log.error(`Streaming ended when waiting. Retry...`);
+        waitAndRetry();
+      });
+      resolve(msg);
+    });
   };
 
   const give = async (msg: Answer): Promise<ClientID> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.give(msg, meta, handler('give', resolve, reject));
+      client.give(msg, meta, unaryHandler('give', resolve, reject));
     });
   };
 
@@ -66,7 +124,7 @@ export default async (
       client.createInvitation(
         msg,
         meta,
-        handler('createInvitation', resolve, reject)
+        unaryHandler('createInvitation', resolve, reject)
       );
     });
   };
@@ -76,21 +134,25 @@ export default async (
   ): Promise<SAImplementation> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.setImplId(msg, meta, handler('setImplId', resolve, reject));
+      client.setImplId(msg, meta, unaryHandler('setImplId', resolve, reject));
     });
   };
 
   const ping = async (msg: PingMsg = new PingMsg()): Promise<PingMsg> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.ping(msg, meta, handler('ping', resolve, reject));
+      client.ping(msg, meta, unaryHandler('ping', resolve, reject));
     });
   };
 
   const createSchema = async (msg: SchemaCreate): Promise<Schema> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.createSchema(msg, meta, handler('createSchema', resolve, reject));
+      client.createSchema(
+        msg,
+        meta,
+        unaryHandler('createSchema', resolve, reject)
+      );
     });
   };
 
@@ -100,7 +162,7 @@ export default async (
       client.createCredDef(
         msg,
         meta,
-        handler('createCredDef', resolve, reject)
+        unaryHandler('createCredDef', resolve, reject)
       );
     });
   };
@@ -108,18 +170,20 @@ export default async (
   const getSchema = async (msg: Schema): Promise<SchemaData> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.getSchema(msg, meta, handler('getSchema', resolve, reject));
+      client.getSchema(msg, meta, unaryHandler('getSchema', resolve, reject));
     });
   };
 
   const getCredDef = async (msg: CredDef): Promise<CredDefData> => {
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
-      client.getCredDef(msg, meta, handler('getCredDef', resolve, reject));
+      client.getCredDef(msg, meta, unaryHandler('getCredDef', resolve, reject));
     });
   };
 
   return {
+    startListening,
+    startWaiting,
     give,
     createInvitation,
     setImplId,
