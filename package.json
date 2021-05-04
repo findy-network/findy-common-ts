@@ -1,6 +1,6 @@
 {
   "name": "@findy-network/findy-common-ts",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "TS helpers for findy-agent API",
   "bin": "./bin/findy-agent-cli",
   "files": [
