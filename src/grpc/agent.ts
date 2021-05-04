@@ -72,9 +72,11 @@ export const createAgentClient = async (
       });
       stream.on('error', (err) => {
         log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+        stream.cancel();
       });
       stream.on('end', () => {
         log.error(`Streaming ended when listening. Retry...`);
+        stream.cancel();
         waitAndRetry();
       });
       resolve(msg);
@@ -106,9 +108,11 @@ export const createAgentClient = async (
       });
       stream.on('error', (err) => {
         log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+        stream.cancel();
       });
       stream.on('end', () => {
         log.error(`Streaming ended when waiting. Retry...`);
+        stream.cancel();
         waitAndRetry();
       });
       resolve(msg);
