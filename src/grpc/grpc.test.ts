@@ -35,18 +35,16 @@ const { start: startMock, stop: stopMock } = testServer(props);
 let agentClient: AgentClient;
 let protocolClient: ProtocolClient;
 
-beforeAll(async () => {
-  stopMock();
-  startMock();
-
-  const connection = await grpc(props, acator);
-  const { createAgentClient, createProtocolClient } = connection;
-  agentClient = await createAgentClient();
-  protocolClient = await createProtocolClient();
-});
-afterAll(stopMock);
-
 describe('GRPC', () => {
+  beforeAll(async () => {
+    startMock();
+
+    const connection = await grpc(props, acator);
+    const { createAgentClient, createProtocolClient } = connection;
+    agentClient = await createAgentClient();
+    protocolClient = await createProtocolClient();
+  });
+
   describe('Agent', () => {
     it('should open connection', async () => {
       expect(agentClient).toBeDefined();
@@ -76,25 +74,6 @@ describe('GRPC', () => {
     it('should wait for questions', async () => {
       const clientID = new ClientID();
       clientID.setId('id');
-
-      const question = await new Promise<Question>((resolve) => {
-        agentClient
-          .startWaiting(clientID, (q: Question) => {
-            resolve(q);
-          })
-          .then(
-            () => {},
-            () => {}
-          );
-      });
-      const res = question.getStatus() ?? new AgentStatus();
-      expect(res).toBeDefined();
-      const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
-    });
-    it('should wait for questions after error', async () => {
-      const clientID = new ClientID();
-      clientID.setId('errorid');
 
       const question = await new Promise<Question>((resolve) => {
         agentClient
@@ -235,5 +214,10 @@ describe('GRPC', () => {
       const res = await protocolClient.release(protocol);
       expect(res).toEqual(protocol);
     });
+  });
+  afterAll(async () => {
+    agentClient.close();
+    protocolClient.close();
+    await stopMock();
   });
 });
