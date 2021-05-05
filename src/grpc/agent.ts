@@ -43,7 +43,7 @@ export interface AgentClient {
   close: () => void;
 }
 
-export default async (
+export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta }: MetaProvider
 ): Promise<AgentClient> => {
@@ -52,6 +52,7 @@ export default async (
     handleStatus: (status: AgentStatus) => void,
     retryCount: number = 0
   ): Promise<ClientID> => {
+    log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
     return await new Promise((resolve) => {
@@ -85,6 +86,7 @@ export default async (
     handleQuestion: (question: Question) => void,
     retryCount: number = 0
   ): Promise<ClientID> => {
+    log.debug(`Agent: start waiting ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
     return await new Promise((resolve) => {
@@ -114,6 +116,7 @@ export default async (
   };
 
   const give = async (msg: Answer): Promise<ClientID> => {
+    log.debug(`Agent: give answer ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.give(msg, meta, unaryHandler('give', resolve, reject));
@@ -121,6 +124,7 @@ export default async (
   };
 
   const createInvitation = async (msg: InvitationBase): Promise<Invitation> => {
+    log.debug(`Agent: create invitation ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.createInvitation(
@@ -134,6 +138,7 @@ export default async (
   const setImplId = async (
     msg: SAImplementation
   ): Promise<SAImplementation> => {
+    log.debug(`Agent: set implementation ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.setImplId(msg, meta, unaryHandler('setImplId', resolve, reject));
@@ -141,6 +146,7 @@ export default async (
   };
 
   const ping = async (msg: PingMsg = new PingMsg()): Promise<PingMsg> => {
+    log.debug(`Agent: ping ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.ping(msg, meta, unaryHandler('ping', resolve, reject));
@@ -148,6 +154,7 @@ export default async (
   };
 
   const createSchema = async (msg: SchemaCreate): Promise<Schema> => {
+    log.debug(`Agent: create schema ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.createSchema(
@@ -159,6 +166,7 @@ export default async (
   };
 
   const createCredDef = async (msg: CredDefCreate): Promise<CredDefData> => {
+    log.debug(`Agent: create cred def ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.createCredDef(
@@ -170,6 +178,7 @@ export default async (
   };
 
   const getSchema = async (msg: Schema): Promise<SchemaData> => {
+    log.debug(`Agent: get schema ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.getSchema(msg, meta, unaryHandler('getSchema', resolve, reject));
@@ -177,6 +186,7 @@ export default async (
   };
 
   const getCredDef = async (msg: CredDef): Promise<CredDefData> => {
+    log.debug(`Agent: get cred def ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.getCredDef(msg, meta, unaryHandler('getCredDef', resolve, reject));
@@ -184,6 +194,7 @@ export default async (
   };
 
   const close = (): void => {
+    log.debug(`Agent: close`);
     closeClient(client);
   };
 
