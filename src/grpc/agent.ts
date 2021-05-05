@@ -121,6 +121,7 @@ export default async (
   };
 
   const createInvitation = async (msg: InvitationBase): Promise<Invitation> => {
+    log.debug(`Agent: create invitation ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
     return await new Promise((resolve, reject) => {
       client.createInvitation(

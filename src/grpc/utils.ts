@@ -6,15 +6,14 @@ export const unaryHandler = (
   resolve: (res: any) => void,
   reject: (err: any) => void
 ) => (err: ServiceError | null, res: any): void => {
-  log.debug(
-    `${name} response ${JSON.stringify(res.toObject())} ${
-      err != null ? `, err ${JSON.stringify(err)}` : ''
-    }`
-  );
   if (err != null) {
-    log.error(`GRPC error ${JSON.stringify(err)}`);
+    log.error(`${name}: GRPC error ${JSON.stringify(err)}`);
     reject(err);
+  } else if (res == null) {
+    log.error(`Null GRPC response for ${name}`);
+    reject(new Error('No response for GRPC call'));
   } else {
+    log.debug(`${name} response ${JSON.stringify(res.toObject())}`);
     resolve(res);
   }
 };

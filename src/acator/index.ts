@@ -50,7 +50,7 @@ export default (
     try {
       const jwtToken = await exec(loginCmd);
       log.info('Agent login succeeded with first try.');
-      return jwtToken;
+      return jwtToken.trim();
     } catch {
       log.info('Agent login failed with first try, trying to register...');
       const registerOutput = await exec(registerCmd);

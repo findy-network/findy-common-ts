@@ -34,7 +34,7 @@ export default async (
   const getChannelCreds = (): ChannelCredentials => {
     const rootCert = fs.readFileSync(certPath);
     const args: any[] = [rootCert, null, null];
-    if (verifyServerIdentity) {
+    if (!verifyServerIdentity) {
       args.push({ checkServerIdentity: () => null });
     }
     return credentials.createSsl(...args);
