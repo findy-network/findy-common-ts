@@ -43,7 +43,7 @@ export interface AgentClient {
   close: () => void;
 }
 
-export default async (
+export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta }: MetaProvider
 ): Promise<AgentClient> => {

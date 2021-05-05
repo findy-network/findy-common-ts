@@ -19,7 +19,7 @@ export interface ProtocolClient {
   close: () => void;
 }
 
-export default async (
+export const createProtocolClient = async (
   client: ProtocolServiceClient,
   { getMeta }: MetaProvider
 ): Promise<ProtocolClient> => {

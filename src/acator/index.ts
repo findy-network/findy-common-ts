@@ -27,7 +27,7 @@ const doExec = async (cmd: string): Promise<string> => {
   );
 };
 
-export default (
+export const createAcator = (
   { authUrl, userName, key }: AcatorProps,
   exec = doExec
 ): Acator => {

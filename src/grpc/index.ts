@@ -3,8 +3,11 @@ import { credentials, ChannelCredentials } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 import { ProtocolServiceClient } from '../idl/protocol_grpc_pb';
 
-import agentClient, { AgentClient } from './agent';
-import protocolClient, { ProtocolClient } from './protocol';
+import { AgentClient, createAgentClient as agentClient } from './agent';
+import {
+  ProtocolClient,
+  createProtocolClient as protocolClient
+} from './protocol';
 import { Acator } from '../acator';
 import metaProvider from './metadata';
 
@@ -20,7 +23,7 @@ export interface Connection {
   createProtocolClient: () => Promise<ProtocolClient>;
 }
 
-export default async (
+export const openGRPCConnection = async (
   {
     certPath,
     verifyServerIdentity,

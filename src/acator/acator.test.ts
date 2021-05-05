@@ -1,4 +1,4 @@
-import authenticator from './index';
+import { createAcator as authenticator } from './index';
 
 describe('Acator', () => {
   it('should login', async () => {

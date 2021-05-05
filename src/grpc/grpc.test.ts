@@ -13,7 +13,7 @@ import {
 } from '../idl/agent_pb';
 import { AgentClient } from './agent';
 import { ProtocolClient } from './protocol';
-import grpc, { ConnectionProps } from './index';
+import { ConnectionProps, openGRPCConnection as grpc } from './index';
 import testServer, { getToken } from './test-utils';
 import { Protocol, ProtocolID, ProtocolState } from '../idl/protocol_pb';
 
