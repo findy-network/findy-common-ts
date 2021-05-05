@@ -43,6 +43,10 @@ export const openGRPCConnection = async (
     return credentials.createSsl(...args);
   };
 
+  // Note, a limitation in grpc-js:
+  // "Currently, you cannot explicitly attach a single connection to clients for two different services.
+  // However, if you create two clients with the same URL, credentials, and options (if any),
+  // they should end up using the same underlying connection."
   const createAgentClient = async (): Promise<AgentClient> => {
     const creds = getChannelCreds();
     const client = new AgentServiceClient(
