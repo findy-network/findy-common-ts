@@ -92,6 +92,7 @@ class AgentServer implements IAgentServiceServer {
       if (call.request.getId().startsWith('error') && !listenErrorSent) {
         const err = new Error('error');
         call.emit('error', err);
+        call.end();
         listenErrorSent = true;
       } else {
         call.write(msg);
@@ -121,6 +122,7 @@ class AgentServer implements IAgentServiceServer {
       if (call.request.getId().startsWith('error') && !waitErrorSent) {
         const err = new Error('error');
         call.emit('error', err);
+        call.end();
         waitErrorSent = true;
       } else {
         call.write(msg);
