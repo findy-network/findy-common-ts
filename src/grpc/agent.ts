@@ -14,18 +14,21 @@ import {
   Schema,
   SchemaData,
   Question,
-  AgentStatus
+  AgentStatus,
+  Notification
 } from '../idl/agent_pb';
+import { ProtocolID, ProtocolState, ProtocolStatus } from '../idl/protocol_pb';
 
 import log from '../log';
 import { MetaProvider } from './metadata';
+import { ProtocolClient } from './protocol';
 import { unaryHandler } from './utils';
 
 const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
 
 export interface AgentClient {
   startListening: (
-    handleStatus: (status: AgentStatus) => void
+    handleStatus: (status?: ListenStatus, err?: Error) => void
   ) => Promise<ClientID>;
   startWaiting: (
     handleQuestion: (question: Question) => void
@@ -41,16 +44,46 @@ export interface AgentClient {
   close: () => void;
 }
 
+export interface CallbackOptions {
+  retryOnError: boolean;
+  filterKeepalive: boolean;
+}
+
+export interface ListenOptions extends CallbackOptions {
+  autoRelease: boolean;
+  autoProtocolStatus: boolean;
+  protocolClient?: ProtocolClient;
+}
+
+const defaultListenOptions = {
+  retryOnError: true,
+  autoRelease: false,
+  autoProtocolStatus: false,
+  filterKeepalive: true
+};
+
+export interface ListenStatus {
+  agent: AgentStatus;
+  protocol?: ProtocolStatus;
+}
+
 export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta, getClientId }: MetaProvider
 ): Promise<AgentClient> => {
   const startListening = async (
-    handleStatus: (status: AgentStatus) => void,
+    handleStatus: (status?: ListenStatus, err?: Error) => void,
+    options: ListenOptions = defaultListenOptions,
     retryCount: number = 0
   ): Promise<ClientID> => {
     const msg = getClientId();
     log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
+
+    if (options.autoProtocolStatus && options.protocolClient == null) {
+      throw new Error(
+        'Set valid protocol client when using auto protocol status'
+      );
+    }
 
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
@@ -59,24 +92,80 @@ export const createAgentClient = async (
       let newCount = retryCount;
       const waitAndRetry = (): NodeJS.Timeout =>
         setTimeout(() => {
-          startListening(handleStatus, newCount + 1).then(
-            () => log.debug('Listening started'),
+          startListening(handleStatus, options, newCount + 1).then(
+            () => log.debug(`Listening started after ${timeout}ms`),
             () => {}
           );
         }, timeout);
 
       stream.on('data', (status: AgentStatus) => {
         newCount = 0;
-        handleStatus(status);
+
+        const notification = status.getNotification() ?? new Notification();
+        log.debug(`Received status ${JSON.stringify(status.toObject())}`);
+
+        const filterMsg =
+          options.filterKeepalive &&
+          notification.getTypeid() === Notification.Type.KEEPALIVE;
+        const fetchProtocolStatus =
+          options.autoProtocolStatus &&
+          options.protocolClient != null &&
+          notification.getTypeid() === Notification.Type.STATUS_UPDATE;
+
+        // TODO: errors, promises
+        if (!filterMsg) {
+          if (fetchProtocolStatus) {
+            const msg = new ProtocolID();
+            msg.setId(notification.getProtocolid());
+            msg.setTypeid(notification.getProtocolType());
+            msg.setRole(notification.getRole());
+            options.protocolClient
+              ?.status(msg)
+              .then((protocolStatus) => {
+                handleStatus({ agent: status, protocol: protocolStatus });
+                if (
+                  protocolStatus.getState()?.getState() ===
+                    ProtocolState.State.OK &&
+                  options.autoRelease
+                ) {
+                  options.protocolClient
+                    ?.release(msg)
+                    .then(() => {
+                      log.debug('Protocol released successfully');
+                    })
+                    .catch((err) => {
+                      log.error(
+                        `Error releasing protocol ${JSON.stringify(err)}`
+                      );
+                    });
+                }
+              })
+              .catch((err) => {
+                log.error(
+                  `Error fetching protocol status ${JSON.stringify(err)}`
+                );
+              });
+          }
+          if (!fetchProtocolStatus) {
+            handleStatus({ agent: status });
+          }
+        }
       });
+
       stream.on('error', (err) => {
         log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+        if (!options.retryOnError) {
+          handleStatus(undefined, err);
+        }
         stream.cancel();
       });
       stream.on('end', () => {
-        log.error(`Streaming ended when listening. Retry...`);
+        log.error(`Streaming ended when listening.`);
         stream.cancel();
-        waitAndRetry();
+        if (options.retryOnError) {
+          log.error(`Retry listening...`);
+          waitAndRetry();
+        }
       });
       resolve(msg);
     });
