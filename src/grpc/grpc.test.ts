@@ -53,12 +53,9 @@ describe('GRPC', () => {
       expect(res).toBeDefined();
     });
     it('should listen for status', async () => {
-      const clientID = new ClientID();
-      clientID.setId('id');
-
       const status = await new Promise<AgentStatus>((resolve) => {
         agentClient
-          .startListening(clientID, (s: AgentStatus) => {
+          .startListening((s: AgentStatus) => {
             resolve(s);
           })
           .then(
@@ -69,15 +66,12 @@ describe('GRPC', () => {
       const res = status.getNotification() ?? new Notification();
       expect(res).toBeDefined();
       const resClientId = status.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
+      expect(resClientId.getId()).not.toEqual('');
     });
     it('should listen for status after error', async () => {
-      const clientID = new ClientID();
-      clientID.setId('errorid');
-
       const status = await new Promise<AgentStatus>((resolve) => {
         agentClient
-          .startListening(clientID, (s: AgentStatus) => {
+          .startListening((s: AgentStatus) => {
             resolve(s);
           })
           .then(
@@ -88,15 +82,12 @@ describe('GRPC', () => {
       const res = status.getNotification() ?? new Notification();
       expect(res).toBeDefined();
       const resClientId = status.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
+      expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions', async () => {
-      const clientID = new ClientID();
-      clientID.setId('id');
-
       const question = await new Promise<Question>((resolve) => {
         agentClient
-          .startWaiting(clientID, (q: Question) => {
+          .startWaiting((q: Question) => {
             resolve(q);
           })
           .then(
@@ -107,15 +98,12 @@ describe('GRPC', () => {
       const res = question.getStatus() ?? new AgentStatus();
       expect(res).toBeDefined();
       const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
+      expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions after error', async () => {
-      const clientID = new ClientID();
-      clientID.setId('errorid');
-
       const question = await new Promise<Question>((resolve) => {
         agentClient
-          .startWaiting(clientID, (q: Question) => {
+          .startWaiting((q: Question) => {
             resolve(q);
           })
           .then(
@@ -126,7 +114,7 @@ describe('GRPC', () => {
       const res = question.getStatus() ?? new AgentStatus();
       expect(res).toBeDefined();
       const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).toEqual(clientID.getId());
+      expect(resClientId.getId()).not.toEqual('');
     });
     it('should give answer', async () => {
       const clientID = new ClientID();
@@ -205,16 +193,41 @@ describe('GRPC', () => {
     });
   });
   describe('Protocol', () => {
-    it('should start protocol', async () => {
+    it('should send basic message', async () => {
       const msg = new Protocol.BasicMessageMsg();
       msg.setContent('content');
 
-      const protocol = new Protocol();
-      protocol.setTypeid(Protocol.Type.BASIC_MESSAGE);
-      protocol.setRole(Protocol.Role.INITIATOR);
-      protocol.setBasicMessage(msg);
+      const res = await protocolClient.sendBasicMessage('connectionId', msg);
+      expect(res).toBeDefined();
+      expect(res.getId()).not.toEqual('');
+      expect(res.getRole()).not.toEqual('');
+      expect(res.getTypeid()).not.toEqual('');
+    });
+    it('should send proof request', async () => {
+      const attribute = new Protocol.Proof.Attribute();
+      attribute.setCredDefid('credDefId');
+      attribute.setName('name');
+      const proof = new Protocol.Proof();
+      proof.addAttributes(attribute);
+      const msg = new Protocol.PresentProofMsg();
+      msg.setAttributes(proof);
 
-      const res = await protocolClient.start(protocol);
+      const res = await protocolClient.sendProofRequest('connectionId', msg);
+      expect(res).toBeDefined();
+      expect(res.getId()).not.toEqual('');
+      expect(res.getRole()).not.toEqual('');
+      expect(res.getTypeid()).not.toEqual('');
+    });
+    it('should send credential offer', async () => {
+      const attribute = new Protocol.IssuingAttributes.Attribute();
+      attribute.setName('name');
+      attribute.setValue('value');
+      const offer = new Protocol.IssuingAttributes();
+      offer.addAttributes(attribute);
+      const msg = new Protocol.IssueCredentialMsg();
+      msg.setAttributes(offer);
+
+      const res = await protocolClient.sendCredentialOffer('connectionId', msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
       expect(res.getRole()).not.toEqual('');

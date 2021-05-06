@@ -25,11 +25,9 @@ const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
 
 export interface AgentClient {
   startListening: (
-    msg: ClientID,
     handleStatus: (status: AgentStatus) => void
   ) => Promise<ClientID>;
   startWaiting: (
-    msg: ClientID,
     handleQuestion: (question: Question) => void
   ) => Promise<ClientID>;
   give: (msg: Answer) => Promise<ClientID>;
@@ -45,14 +43,15 @@ export interface AgentClient {
 
 export const createAgentClient = async (
   client: AgentServiceClient,
-  { getMeta }: MetaProvider
+  { getMeta, getClientId }: MetaProvider
 ): Promise<AgentClient> => {
   const startListening = async (
-    msg: ClientID,
     handleStatus: (status: AgentStatus) => void,
     retryCount: number = 0
   ): Promise<ClientID> => {
+    const msg = getClientId();
     log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
+
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
     return await new Promise((resolve) => {
@@ -60,7 +59,7 @@ export const createAgentClient = async (
       let newCount = retryCount;
       const waitAndRetry = (): NodeJS.Timeout =>
         setTimeout(() => {
-          startListening(msg, handleStatus, newCount + 1).then(
+          startListening(handleStatus, newCount + 1).then(
             () => log.debug('Listening started'),
             () => {}
           );
@@ -84,11 +83,12 @@ export const createAgentClient = async (
   };
 
   const startWaiting = async (
-    msg: ClientID,
     handleQuestion: (question: Question) => void,
     retryCount: number = 0
   ): Promise<ClientID> => {
+    const msg = getClientId();
     log.debug(`Agent: start waiting ${JSON.stringify(msg.toObject())}`);
+
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
     return await new Promise((resolve) => {
@@ -96,7 +96,7 @@ export const createAgentClient = async (
       let newCount = retryCount;
       const waitAndRetry = (): NodeJS.Timeout =>
         setTimeout(() => {
-          startWaiting(msg, handleQuestion, newCount + 1).then(
+          startWaiting(handleQuestion, newCount + 1).then(
             () => log.debug('Waiting started'),
             () => {}
           );

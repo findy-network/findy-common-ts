@@ -1,10 +1,13 @@
 import { Metadata } from '@grpc/grpc-js';
 import { decode } from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
 
 import log from '../log';
 import { Acator } from '../acator';
+import { ClientID } from '../idl/agent_pb';
 
 export interface MetaProvider {
+  getClientId: () => ClientID;
   getMeta: () => Promise<Metadata>;
 }
 
@@ -14,6 +17,14 @@ export default async (renew: Acator): Promise<MetaProvider> => {
   };
 
   let token = await getToken();
+
+  const clientUuid = uuidv4();
+
+  const getClientId = (): ClientID => {
+    const clientId = new ClientID();
+    clientId.setId(clientUuid);
+    return clientId;
+  };
 
   const getMeta = async (): Promise<Metadata> => {
     const tokenData = decode(token) as { exp: number };
@@ -36,6 +47,7 @@ export default async (renew: Acator): Promise<MetaProvider> => {
   };
 
   return {
+    getClientId,
     getMeta
   };
 };
