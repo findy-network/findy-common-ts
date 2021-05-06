@@ -193,16 +193,41 @@ describe('GRPC', () => {
     });
   });
   describe('Protocol', () => {
-    it('should start protocol', async () => {
+    it('should send basic message', async () => {
       const msg = new Protocol.BasicMessageMsg();
       msg.setContent('content');
 
-      const protocol = new Protocol();
-      protocol.setTypeid(Protocol.Type.BASIC_MESSAGE);
-      protocol.setRole(Protocol.Role.INITIATOR);
-      protocol.setBasicMessage(msg);
+      const res = await protocolClient.sendBasicMessage('connectionId', msg);
+      expect(res).toBeDefined();
+      expect(res.getId()).not.toEqual('');
+      expect(res.getRole()).not.toEqual('');
+      expect(res.getTypeid()).not.toEqual('');
+    });
+    it('should send proof request', async () => {
+      const attribute = new Protocol.Proof.Attribute();
+      attribute.setCredDefid('credDefId');
+      attribute.setName('name');
+      const proof = new Protocol.Proof();
+      proof.addAttributes(attribute);
+      const msg = new Protocol.PresentProofMsg();
+      msg.setAttributes(proof);
 
-      const res = await protocolClient.start(protocol);
+      const res = await protocolClient.sendProofRequest('connectionId', msg);
+      expect(res).toBeDefined();
+      expect(res.getId()).not.toEqual('');
+      expect(res.getRole()).not.toEqual('');
+      expect(res.getTypeid()).not.toEqual('');
+    });
+    it('should send credential offer', async () => {
+      const attribute = new Protocol.IssuingAttributes.Attribute();
+      attribute.setName('name');
+      attribute.setValue('value');
+      const offer = new Protocol.IssuingAttributes();
+      offer.addAttributes(attribute);
+      const msg = new Protocol.IssueCredentialMsg();
+      msg.setAttributes(offer);
+
+      const res = await protocolClient.sendCredentialOffer('connectionId', msg);
       expect(res).toBeDefined();
       expect(res.getId()).not.toEqual('');
       expect(res.getRole()).not.toEqual('');
