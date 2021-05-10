@@ -31,7 +31,7 @@ export interface AgentClient {
     handleStatus: (status?: ListenStatus, err?: Error) => void
   ) => Promise<ClientID>;
   startWaiting: (
-    handleQuestion: (question: Question) => void
+    handleQuestion: (question?: Question, err?: Error) => void
   ) => Promise<ClientID>;
   give: (msg: Answer) => Promise<ClientID>;
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
@@ -49,6 +49,11 @@ export interface CallbackOptions {
   filterKeepalive: boolean;
 }
 
+const defaultCallbackOptions = {
+  retryOnError: true,
+  filterKeepalive: true
+};
+
 export interface ListenOptions extends CallbackOptions {
   autoRelease: boolean;
   autoProtocolStatus: boolean;
@@ -56,10 +61,9 @@ export interface ListenOptions extends CallbackOptions {
 }
 
 const defaultListenOptions = {
-  retryOnError: true,
+  ...defaultCallbackOptions,
   autoRelease: false,
-  autoProtocolStatus: false,
-  filterKeepalive: true
+  autoProtocolStatus: false
 };
 
 export interface ListenStatus {
@@ -101,8 +105,8 @@ export const createAgentClient = async (
       stream.on('data', (status: AgentStatus) => {
         newCount = 0;
 
-        const notification = status.getNotification() ?? new Notification();
         log.debug(`Received status ${JSON.stringify(status.toObject())}`);
+        const notification = status.getNotification() ?? new Notification();
 
         const filterMsg =
           options.filterKeepalive &&
@@ -112,7 +116,7 @@ export const createAgentClient = async (
           options.protocolClient != null &&
           notification.getTypeid() === Notification.Type.STATUS_UPDATE;
 
-        // TODO: errors, promises
+        // TODO: refactor
         if (!filterMsg) {
           if (fetchProtocolStatus) {
             const msg = new ProtocolID();
@@ -172,7 +176,8 @@ export const createAgentClient = async (
   };
 
   const startWaiting = async (
-    handleQuestion: (question: Question) => void,
+    handleQuestion: (question?: Question, err?: Error) => void,
+    options: CallbackOptions = defaultCallbackOptions,
     retryCount: number = 0
   ): Promise<ClientID> => {
     const msg = getClientId();
@@ -185,7 +190,7 @@ export const createAgentClient = async (
       let newCount = retryCount;
       const waitAndRetry = (): NodeJS.Timeout =>
         setTimeout(() => {
-          startWaiting(handleQuestion, newCount + 1).then(
+          startWaiting(handleQuestion, options, newCount + 1).then(
             () => log.debug('Waiting started'),
             () => {}
           );
@@ -193,16 +198,30 @@ export const createAgentClient = async (
 
       stream.on('data', (question: Question) => {
         newCount = 0;
-        handleQuestion(question);
+        log.debug(`Received question ${JSON.stringify(question.toObject())}`);
+
+        const filterMsg =
+          options.filterKeepalive &&
+          question.getTypeid() === Question.Type.KEEPALIVE;
+
+        if (!filterMsg) {
+          handleQuestion(question);
+        }
       });
       stream.on('error', (err) => {
         log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+        if (!options.retryOnError) {
+          handleQuestion(undefined, err);
+        }
         stream.cancel();
       });
       stream.on('end', () => {
-        log.error(`Streaming ended when waiting. Retry...`);
+        log.error(`Streaming ended when waiting.`);
         stream.cancel();
-        waitAndRetry();
+        if (options.retryOnError) {
+          log.error(`Retry waiting...`);
+          waitAndRetry();
+        }
       });
       resolve(msg);
     });
