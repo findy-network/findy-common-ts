@@ -37,7 +37,7 @@ export const createAcator = (
     'user-name': userName,
     key
   };
-  const rootCmd = 'findy-agent-cli authn';
+  const rootCmd = 'findy-common-ts authn';
   const params = Object.keys(config)
     .map((item) => `--${item} ${config[item]}`)
     .join(' ');
