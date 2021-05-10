@@ -85,10 +85,10 @@ describe('GRPC', () => {
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions', async () => {
-      const question = await new Promise<Question>((resolve) => {
+      const question = await new Promise<Question>((resolve, reject) => {
         agentClient
-          .startWaiting((q: Question) => {
-            resolve(q);
+          .startWaiting((q?: Question, err?: Error) => {
+            q != null ? resolve(q) : reject(err);
           })
           .then(
             () => {},
@@ -101,10 +101,10 @@ describe('GRPC', () => {
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions after error', async () => {
-      const question = await new Promise<Question>((resolve) => {
+      const question = await new Promise<Question>((resolve, reject) => {
         agentClient
-          .startWaiting((q: Question) => {
-            resolve(q);
+          .startWaiting((q?: Question, err?: Error) => {
+            q != null ? resolve(q) : reject(err);
           })
           .then(
             () => {},
