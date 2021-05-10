@@ -11,7 +11,7 @@ import {
   Schema,
   SchemaCreate
 } from '../idl/agent_pb';
-import { AgentClient } from './agent';
+import { AgentClient, ListenStatus } from './agent';
 import { ProtocolClient } from './protocol';
 import { ConnectionProps, openGRPCConnection as grpc } from './index';
 import testServer, { getToken } from './test-utils';
@@ -53,42 +53,42 @@ describe('GRPC', () => {
       expect(res).toBeDefined();
     });
     it('should listen for status', async () => {
-      const status = await new Promise<AgentStatus>((resolve) => {
+      const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s: AgentStatus) => {
-            resolve(s);
+          .startListening((s?: ListenStatus) => {
+            s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
             () => {},
             () => {}
           );
       });
-      const res = status.getNotification() ?? new Notification();
+      const res = status.agent.getNotification() ?? new Notification();
       expect(res).toBeDefined();
-      const resClientId = status.getClientid() ?? new ClientID();
+      const resClientId = status.agent.getClientid() ?? new ClientID();
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should listen for status after error', async () => {
-      const status = await new Promise<AgentStatus>((resolve) => {
+      const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s: AgentStatus) => {
-            resolve(s);
+          .startListening((s?: ListenStatus) => {
+            s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
             () => {},
             () => {}
           );
       });
-      const res = status.getNotification() ?? new Notification();
+      const res = status.agent.getNotification() ?? new Notification();
       expect(res).toBeDefined();
-      const resClientId = status.getClientid() ?? new ClientID();
+      const resClientId = status.agent.getClientid() ?? new ClientID();
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions', async () => {
-      const question = await new Promise<Question>((resolve) => {
+      const question = await new Promise<Question>((resolve, reject) => {
         agentClient
-          .startWaiting((q: Question) => {
-            resolve(q);
+          .startWaiting((q?: Question, err?: Error) => {
+            q != null ? resolve(q) : reject(err);
           })
           .then(
             () => {},
@@ -101,10 +101,10 @@ describe('GRPC', () => {
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should wait for questions after error', async () => {
-      const question = await new Promise<Question>((resolve) => {
+      const question = await new Promise<Question>((resolve, reject) => {
         agentClient
-          .startWaiting((q: Question) => {
-            resolve(q);
+          .startWaiting((q?: Question, err?: Error) => {
+            q != null ? resolve(q) : reject(err);
           })
           .then(
             () => {},
