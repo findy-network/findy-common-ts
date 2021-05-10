@@ -53,10 +53,10 @@ describe('GRPC', () => {
       expect(res).toBeDefined();
     });
     it('should listen for status', async () => {
-      const status = await new Promise<ListenStatus | undefined>((resolve) => {
+      const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s: ListenStatus | undefined) => {
-            resolve(s);
+          .startListening((s?: ListenStatus) => {
+            s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
             () => {},
@@ -69,10 +69,10 @@ describe('GRPC', () => {
       expect(resClientId.getId()).not.toEqual('');
     });
     it('should listen for status after error', async () => {
-      const status = await new Promise<ListenStatus | undefined>((resolve) => {
+      const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s: ListenStatus | undefined) => {
-            resolve(s);
+          .startListening((s?: ListenStatus) => {
+            s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
             () => {},
