@@ -3,7 +3,7 @@ on: push
 env:
   FINDY_CTS_RETRY_TIMEOUT_SECS: 1
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
     strategy:
       matrix:
