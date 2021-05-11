@@ -18,6 +18,7 @@ import {
   CredDefData,
   Invitation,
   InvitationBase,
+  ModeCmd,
   Notification,
   PingMsg,
   Question,
@@ -197,6 +198,19 @@ class AgentServer implements IAgentServiceServer {
     const msg = new CredDefData();
     msg.setId('id');
     msg.setData('data');
+    callback(err, err != null ? null : msg);
+  }
+
+  enter(
+    call: ServerUnaryCall<ModeCmd, ModeCmd>,
+    callback: sendUnaryData<ModeCmd>
+  ): void {
+    const err = doAuth(call);
+    const msg = new ModeCmd();
+    msg.setAcceptMode(new ModeCmd.AcceptModeCmd());
+    msg.setInfo('info');
+    msg.setIsInput(true);
+    msg.setTypeid(ModeCmd.CmdType.ACCEPT_MODE);
     callback(err, err != null ? null : msg);
   }
 }
