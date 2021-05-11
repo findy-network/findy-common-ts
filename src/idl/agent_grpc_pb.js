@@ -97,6 +97,17 @@ function deserialize_agency_v1_InvitationBase(buffer_arg) {
   return agent_pb.InvitationBase.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
+function serialize_agency_v1_ModeCmd(arg) {
+  if (!(arg instanceof agent_pb.ModeCmd)) {
+    throw new Error('Expected argument of type agency.v1.ModeCmd');
+  }
+  return Buffer.from(arg.serializeBinary());
+}
+
+function deserialize_agency_v1_ModeCmd(buffer_arg) {
+  return agent_pb.ModeCmd.deserializeBinary(new Uint8Array(buffer_arg));
+}
+
 function serialize_agency_v1_PingMsg(arg) {
   if (!(arg instanceof agent_pb.PingMsg)) {
     throw new Error('Expected argument of type agency.v1.PingMsg');
@@ -117,17 +128,6 @@ function serialize_agency_v1_Question(arg) {
 
 function deserialize_agency_v1_Question(buffer_arg) {
   return agent_pb.Question.deserializeBinary(new Uint8Array(buffer_arg));
-}
-
-function serialize_agency_v1_SAImplementation(arg) {
-  if (!(arg instanceof agent_pb.SAImplementation)) {
-    throw new Error('Expected argument of type agency.v1.SAImplementation');
-  }
-  return Buffer.from(arg.serializeBinary());
-}
-
-function deserialize_agency_v1_SAImplementation(buffer_arg) {
-  return agent_pb.SAImplementation.deserializeBinary(new Uint8Array(buffer_arg));
 }
 
 function serialize_agency_v1_Schema(arg) {
@@ -228,21 +228,6 @@ createInvitation: {
     responseSerialize: serialize_agency_v1_Invitation,
     responseDeserialize: deserialize_agency_v1_Invitation,
   },
-  // SetImplId sets implementation ID for the clould agent. It should be "grpc".
-// TODO: REMOVE!! Check Agency implementation first. We still need something
-// for this. At least the autoaccept mode for now.
-// TODO: Rename? Rethink logic: SetSAMode(), etc.?
-setImplId: {
-    path: '/agency.v1.AgentService/SetImplId',
-    requestStream: false,
-    responseStream: false,
-    requestType: agent_pb.SAImplementation,
-    responseType: agent_pb.SAImplementation,
-    requestSerialize: serialize_agency_v1_SAImplementation,
-    requestDeserialize: deserialize_agency_v1_SAImplementation,
-    responseSerialize: serialize_agency_v1_SAImplementation,
-    responseDeserialize: deserialize_agency_v1_SAImplementation,
-  },
   // Ping pings the cloud agent.
 ping: {
     path: '/agency.v1.AgentService/Ping',
@@ -304,6 +289,19 @@ getCredDef: {
     requestDeserialize: deserialize_agency_v1_CredDef,
     responseSerialize: serialize_agency_v1_CredDefData,
     responseDeserialize: deserialize_agency_v1_CredDefData,
+  },
+  // Enter enters the running mode command to the CA. CA executes the cmd and
+// returns the result. Command pattern is selected to allow easy extensions.
+enter: {
+    path: '/agency.v1.AgentService/Enter',
+    requestStream: false,
+    responseStream: false,
+    requestType: agent_pb.ModeCmd,
+    responseType: agent_pb.ModeCmd,
+    requestSerialize: serialize_agency_v1_ModeCmd,
+    requestDeserialize: deserialize_agency_v1_ModeCmd,
+    responseSerialize: serialize_agency_v1_ModeCmd,
+    responseDeserialize: deserialize_agency_v1_ModeCmd,
   },
 };
 

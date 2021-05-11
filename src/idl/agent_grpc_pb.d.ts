@@ -14,12 +14,12 @@ interface IAgentServiceService extends grpc.ServiceDefinition<grpc.UntypedServic
     wait: IAgentServiceService_IWait;
     give: IAgentServiceService_IGive;
     createInvitation: IAgentServiceService_ICreateInvitation;
-    setImplId: IAgentServiceService_ISetImplId;
     ping: IAgentServiceService_IPing;
     createSchema: IAgentServiceService_ICreateSchema;
     createCredDef: IAgentServiceService_ICreateCredDef;
     getSchema: IAgentServiceService_IGetSchema;
     getCredDef: IAgentServiceService_IGetCredDef;
+    enter: IAgentServiceService_IEnter;
 }
 
 interface IAgentServiceService_IListen extends grpc.MethodDefinition<agent_pb.ClientID, agent_pb.AgentStatus> {
@@ -57,15 +57,6 @@ interface IAgentServiceService_ICreateInvitation extends grpc.MethodDefinition<a
     requestDeserialize: grpc.deserialize<agent_pb.InvitationBase>;
     responseSerialize: grpc.serialize<agent_pb.Invitation>;
     responseDeserialize: grpc.deserialize<agent_pb.Invitation>;
-}
-interface IAgentServiceService_ISetImplId extends grpc.MethodDefinition<agent_pb.SAImplementation, agent_pb.SAImplementation> {
-    path: "/agency.v1.AgentService/SetImplId";
-    requestStream: false;
-    responseStream: false;
-    requestSerialize: grpc.serialize<agent_pb.SAImplementation>;
-    requestDeserialize: grpc.deserialize<agent_pb.SAImplementation>;
-    responseSerialize: grpc.serialize<agent_pb.SAImplementation>;
-    responseDeserialize: grpc.deserialize<agent_pb.SAImplementation>;
 }
 interface IAgentServiceService_IPing extends grpc.MethodDefinition<agent_pb.PingMsg, agent_pb.PingMsg> {
     path: "/agency.v1.AgentService/Ping";
@@ -112,6 +103,15 @@ interface IAgentServiceService_IGetCredDef extends grpc.MethodDefinition<agent_p
     responseSerialize: grpc.serialize<agent_pb.CredDefData>;
     responseDeserialize: grpc.deserialize<agent_pb.CredDefData>;
 }
+interface IAgentServiceService_IEnter extends grpc.MethodDefinition<agent_pb.ModeCmd, agent_pb.ModeCmd> {
+    path: "/agency.v1.AgentService/Enter";
+    requestStream: false;
+    responseStream: false;
+    requestSerialize: grpc.serialize<agent_pb.ModeCmd>;
+    requestDeserialize: grpc.deserialize<agent_pb.ModeCmd>;
+    responseSerialize: grpc.serialize<agent_pb.ModeCmd>;
+    responseDeserialize: grpc.deserialize<agent_pb.ModeCmd>;
+}
 
 export const AgentServiceService: IAgentServiceService;
 
@@ -120,12 +120,12 @@ export interface IAgentServiceServer extends grpc.UntypedServiceImplementation {
     wait: grpc.handleServerStreamingCall<agent_pb.ClientID, agent_pb.Question>;
     give: grpc.handleUnaryCall<agent_pb.Answer, agent_pb.ClientID>;
     createInvitation: grpc.handleUnaryCall<agent_pb.InvitationBase, agent_pb.Invitation>;
-    setImplId: grpc.handleUnaryCall<agent_pb.SAImplementation, agent_pb.SAImplementation>;
     ping: grpc.handleUnaryCall<agent_pb.PingMsg, agent_pb.PingMsg>;
     createSchema: grpc.handleUnaryCall<agent_pb.SchemaCreate, agent_pb.Schema>;
     createCredDef: grpc.handleUnaryCall<agent_pb.CredDefCreate, agent_pb.CredDef>;
     getSchema: grpc.handleUnaryCall<agent_pb.Schema, agent_pb.SchemaData>;
     getCredDef: grpc.handleUnaryCall<agent_pb.CredDef, agent_pb.CredDefData>;
+    enter: grpc.handleUnaryCall<agent_pb.ModeCmd, agent_pb.ModeCmd>;
 }
 
 export interface IAgentServiceClient {
@@ -139,9 +139,6 @@ export interface IAgentServiceClient {
     createInvitation(request: agent_pb.InvitationBase, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
     createInvitation(request: agent_pb.InvitationBase, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
     createInvitation(request: agent_pb.InvitationBase, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
-    setImplId(request: agent_pb.SAImplementation, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
-    setImplId(request: agent_pb.SAImplementation, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
-    setImplId(request: agent_pb.SAImplementation, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
     ping(request: agent_pb.PingMsg, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
     ping(request: agent_pb.PingMsg, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
     ping(request: agent_pb.PingMsg, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
@@ -157,6 +154,9 @@ export interface IAgentServiceClient {
     getCredDef(request: agent_pb.CredDef, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
     getCredDef(request: agent_pb.CredDef, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
     getCredDef(request: agent_pb.CredDef, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
+    enter(request: agent_pb.ModeCmd, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
+    enter(request: agent_pb.ModeCmd, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
+    enter(request: agent_pb.ModeCmd, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
 }
 
 export class AgentServiceClient extends grpc.Client implements IAgentServiceClient {
@@ -171,9 +171,6 @@ export class AgentServiceClient extends grpc.Client implements IAgentServiceClie
     public createInvitation(request: agent_pb.InvitationBase, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
     public createInvitation(request: agent_pb.InvitationBase, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
     public createInvitation(request: agent_pb.InvitationBase, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.Invitation) => void): grpc.ClientUnaryCall;
-    public setImplId(request: agent_pb.SAImplementation, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
-    public setImplId(request: agent_pb.SAImplementation, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
-    public setImplId(request: agent_pb.SAImplementation, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.SAImplementation) => void): grpc.ClientUnaryCall;
     public ping(request: agent_pb.PingMsg, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
     public ping(request: agent_pb.PingMsg, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
     public ping(request: agent_pb.PingMsg, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.PingMsg) => void): grpc.ClientUnaryCall;
@@ -189,4 +186,7 @@ export class AgentServiceClient extends grpc.Client implements IAgentServiceClie
     public getCredDef(request: agent_pb.CredDef, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
     public getCredDef(request: agent_pb.CredDef, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
     public getCredDef(request: agent_pb.CredDef, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.CredDefData) => void): grpc.ClientUnaryCall;
+    public enter(request: agent_pb.ModeCmd, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
+    public enter(request: agent_pb.ModeCmd, metadata: grpc.Metadata, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
+    public enter(request: agent_pb.ModeCmd, metadata: grpc.Metadata, options: Partial<grpc.CallOptions>, callback: (error: grpc.ServiceError | null, response: agent_pb.ModeCmd) => void): grpc.ClientUnaryCall;
 }

@@ -21,7 +21,6 @@ import {
   Notification,
   PingMsg,
   Question,
-  SAImplementation,
   Schema,
   SchemaCreate,
   SchemaData
@@ -149,19 +148,6 @@ class AgentServer implements IAgentServiceServer {
     invitation.setJson('json');
     invitation.setUrl('url');
     callback(err, err != null ? null : invitation);
-  }
-
-  setImplId(
-    call: ServerUnaryCall<SAImplementation, SAImplementation>,
-    callback: sendUnaryData<SAImplementation>
-  ): void {
-    const err = doAuth(call);
-    const msg = new SAImplementation();
-    msg.setEndpoint(call.request.getEndpoint());
-    msg.setId(call.request.getId());
-    msg.setKey(call.request.getKey());
-    msg.setPersistent(call.request.getPersistent());
-    callback(err, err != null ? null : msg);
   }
 
   ping(
