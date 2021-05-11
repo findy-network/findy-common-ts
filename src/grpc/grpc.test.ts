@@ -7,7 +7,6 @@ import {
   InvitationBase,
   Notification,
   Question,
-  SAImplementation,
   Schema,
   SchemaCreate
 } from '../idl/agent_pb';
@@ -139,20 +138,6 @@ describe('GRPC', () => {
       expect(res).toBeDefined();
       expect(res.getJson()).not.toEqual('');
       expect(res.getUrl()).not.toEqual('');
-    });
-    it('should set impl id', async () => {
-      const msg = new SAImplementation();
-      msg.setEndpoint('endpoint');
-      msg.setId('id');
-      msg.setKey('key');
-      msg.setPersistent(true);
-
-      const res = await agentClient.setImplId(msg);
-      expect(res).toBeDefined();
-      expect(res.getEndpoint()).toEqual(msg.getEndpoint());
-      expect(res.getId()).toEqual(msg.getId());
-      expect(res.getKey()).toEqual(msg.getKey());
-      expect(res.getPersistent()).toEqual(msg.getPersistent());
     });
     it('should create schema', async () => {
       const msg = new SchemaCreate();

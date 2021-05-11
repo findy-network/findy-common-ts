@@ -7,6 +7,81 @@
 import * as jspb from "google-protobuf";
 import * as protocol_pb from "./protocol_pb";
 
+export class ModeCmd extends jspb.Message { 
+    getTypeid(): ModeCmd.CmdType;
+    setTypeid(value: ModeCmd.CmdType): ModeCmd;
+    getIsInput(): boolean;
+    setIsInput(value: boolean): ModeCmd;
+    getInfo(): string;
+    setInfo(value: string): ModeCmd;
+
+    hasAcceptMode(): boolean;
+    clearAcceptMode(): void;
+    getAcceptMode(): ModeCmd.AcceptModeCmd | undefined;
+    setAcceptMode(value?: ModeCmd.AcceptModeCmd): ModeCmd;
+
+    getControlCmdCase(): ModeCmd.ControlCmdCase;
+
+    serializeBinary(): Uint8Array;
+    toObject(includeInstance?: boolean): ModeCmd.AsObject;
+    static toObject(includeInstance: boolean, msg: ModeCmd): ModeCmd.AsObject;
+    static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+    static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+    static serializeBinaryToWriter(message: ModeCmd, writer: jspb.BinaryWriter): void;
+    static deserializeBinary(bytes: Uint8Array): ModeCmd;
+    static deserializeBinaryFromReader(message: ModeCmd, reader: jspb.BinaryReader): ModeCmd;
+}
+
+export namespace ModeCmd {
+    export type AsObject = {
+        typeid: ModeCmd.CmdType,
+        isInput: boolean,
+        info: string,
+        acceptMode?: ModeCmd.AcceptModeCmd.AsObject,
+    }
+
+
+    export class AcceptModeCmd extends jspb.Message { 
+        getMode(): ModeCmd.AcceptModeCmd.Mode;
+        setMode(value: ModeCmd.AcceptModeCmd.Mode): AcceptModeCmd;
+
+        serializeBinary(): Uint8Array;
+        toObject(includeInstance?: boolean): AcceptModeCmd.AsObject;
+        static toObject(includeInstance: boolean, msg: AcceptModeCmd): AcceptModeCmd.AsObject;
+        static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+        static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+        static serializeBinaryToWriter(message: AcceptModeCmd, writer: jspb.BinaryWriter): void;
+        static deserializeBinary(bytes: Uint8Array): AcceptModeCmd;
+        static deserializeBinaryFromReader(message: AcceptModeCmd, reader: jspb.BinaryReader): AcceptModeCmd;
+    }
+
+    export namespace AcceptModeCmd {
+        export type AsObject = {
+            mode: ModeCmd.AcceptModeCmd.Mode,
+        }
+
+        export enum Mode {
+    DEFAULT = 0,
+    AUTO_ACCEPT = 1,
+    GRPC_CONTROL = 2,
+        }
+
+    }
+
+
+    export enum CmdType {
+    NONE = 0,
+    ACCEPT_MODE = 1,
+    }
+
+
+    export enum ControlCmdCase {
+        CONTROLCMD_NOT_SET = 0,
+        ACCEPT_MODE = 4,
+    }
+
+}
+
 export class SchemaData extends jspb.Message { 
     getId(): string;
     setId(value: string): SchemaData;

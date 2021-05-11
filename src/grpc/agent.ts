@@ -9,7 +9,6 @@ import {
   Invitation,
   InvitationBase,
   PingMsg,
-  SAImplementation,
   SchemaCreate,
   Schema,
   SchemaData,
@@ -35,7 +34,6 @@ export interface AgentClient {
   ) => Promise<ClientID>;
   give: (msg: Answer) => Promise<ClientID>;
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
-  setImplId: (msg: SAImplementation) => Promise<SAImplementation>;
   ping: () => Promise<PingMsg>;
   createSchema: (msg: SchemaCreate) => Promise<Schema>;
   createCredDef: (msg: CredDefCreate) => Promise<CredDefData>;
@@ -247,16 +245,6 @@ export const createAgentClient = async (
     });
   };
 
-  const setImplId = async (
-    msg: SAImplementation
-  ): Promise<SAImplementation> => {
-    log.debug(`Agent: set implementation ${JSON.stringify(msg.toObject())}`);
-    const meta = await getMeta();
-    return await new Promise((resolve, reject) => {
-      client.setImplId(msg, meta, unaryHandler('setImplId', resolve, reject));
-    });
-  };
-
   const ping = async (msg: PingMsg = new PingMsg()): Promise<PingMsg> => {
     log.debug(`Agent: ping ${JSON.stringify(msg.toObject())}`);
     const meta = await getMeta();
@@ -315,7 +303,6 @@ export const createAgentClient = async (
     startWaiting,
     give,
     createInvitation,
-    setImplId,
     ping,
     createSchema,
     createCredDef,

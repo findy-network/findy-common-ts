@@ -18,10 +18,10 @@ import {
   CredDefData,
   Invitation,
   InvitationBase,
+  ModeCmd,
   Notification,
   PingMsg,
   Question,
-  SAImplementation,
   Schema,
   SchemaCreate,
   SchemaData
@@ -151,19 +151,6 @@ class AgentServer implements IAgentServiceServer {
     callback(err, err != null ? null : invitation);
   }
 
-  setImplId(
-    call: ServerUnaryCall<SAImplementation, SAImplementation>,
-    callback: sendUnaryData<SAImplementation>
-  ): void {
-    const err = doAuth(call);
-    const msg = new SAImplementation();
-    msg.setEndpoint(call.request.getEndpoint());
-    msg.setId(call.request.getId());
-    msg.setKey(call.request.getKey());
-    msg.setPersistent(call.request.getPersistent());
-    callback(err, err != null ? null : msg);
-  }
-
   ping(
     call: ServerUnaryCall<PingMsg, PingMsg>,
     callback: sendUnaryData<PingMsg>
@@ -211,6 +198,19 @@ class AgentServer implements IAgentServiceServer {
     const msg = new CredDefData();
     msg.setId('id');
     msg.setData('data');
+    callback(err, err != null ? null : msg);
+  }
+
+  enter(
+    call: ServerUnaryCall<ModeCmd, ModeCmd>,
+    callback: sendUnaryData<ModeCmd>
+  ): void {
+    const err = doAuth(call);
+    const msg = new ModeCmd();
+    msg.setAcceptMode(new ModeCmd.AcceptModeCmd());
+    msg.setInfo('info');
+    msg.setIsInput(true);
+    msg.setTypeid(ModeCmd.CmdType.ACCEPT_MODE);
     callback(err, err != null ? null : msg);
   }
 }
