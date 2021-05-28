@@ -35,7 +35,7 @@ export const openGRPCConnection = async (
   const meta = await metaProvider(acator);
 
   const getChannelCreds = (): ChannelCredentials => {
-    const rootCert = fs.readFileSync(certPath);
+    const rootCert = certPath !== '' ? fs.readFileSync(certPath) : null;
     const args: any[] = [rootCert, null, null];
     if (!verifyServerIdentity) {
       args.push({ checkServerIdentity: () => null });
