@@ -2,11 +2,6 @@
 
 set -e
 
-if [ -z "$GITHUB_TOKEN" ]; then
-  echo "ERROR: Define env variable GITHUB_TOKEN"
-  exit 1
-fi
-
 CURRENT_DIR=$(dirname "$BASH_SOURCE")
 
 PROTO_DIR=$CURRENT_DIR/../idl
