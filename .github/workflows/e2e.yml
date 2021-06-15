@@ -13,6 +13,6 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
       - name: install deps
-        run: npm ci
+        run: npm ci --ignore-scripts
       - name: test
         run: npm run e2e
