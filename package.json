@@ -14,7 +14,7 @@
     "clean": "rimraf dist",
     "copy:bin": "cp ./bin/findy-agent-cli node_modules/.bin/findy-common-ts",
     "e2e": "npm run build && npm run e2e:init && npm run e2e:test",
-    "e2e:init": "cd e2e && mkdir -p .data && docker compose up -d",
+    "e2e:init": "cd e2e && mkdir -p .data && docker-compose up -d",
     "e2e:test": "jest ./e2e",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
