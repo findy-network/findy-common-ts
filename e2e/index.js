@@ -1,13 +1,13 @@
 const express = require('express');
 const app = express();
 
-const port = process.env.PORT;
-const authUrl = process.env.AUTH_URL;
-const userName = process.env.USER_NAME;
-const key = process.env.KEY;
-const serverAddress = process.env.SERVER_ADDRESS;
-const serverPort = process.env.SERVER_PORT;
-const certPath = process.env.CERT_PATH;
+const port = 3100;
+const authUrl = "http://localhost:8088";
+const userName = "findy-common-ts-e2e-1";
+const key = "15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c";
+const serverAddress = "localhost";
+const serverPort = 50052;
+const certPath = "./config/cert";
 
 const messages = [];
 
@@ -46,9 +46,9 @@ const init = async () => {
     msg.setLabel(config.ourName);
     msg.setId(newId);
 
-    const res = await agentClient.createInvitation(msg);
+    const result = await agentClient.createInvitation(msg);
 
-    res.send(res.getJson());
+    res.send(result.getJson());
   });
 
   app.listen(port, () => {

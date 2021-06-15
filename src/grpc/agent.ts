@@ -1,4 +1,4 @@
-import { closeClient } from '@grpc/grpc-js';
+import { ClientReadableStream, closeClient } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 import {
   Answer,
@@ -27,11 +27,13 @@ const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
 
 export interface AgentClient {
   startListening: (
-    handleStatus: (status?: ListenStatus, err?: Error) => void
-  ) => Promise<ClientID>;
+    handleStatus: (status?: ListenStatus, err?: Error) => void,
+    options?: ListenOptions
+  ) => Promise<ClientReadableStream<AgentStatus>>;
   startWaiting: (
-    handleQuestion: (question?: Question, err?: Error) => void
-  ) => Promise<ClientID>;
+    handleQuestion: (question?: Question, err?: Error) => void,
+    options?: CallbackOptions
+  ) => Promise<ClientReadableStream<Question>>;
   give: (msg: Answer) => Promise<ClientID>;
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
   ping: () => Promise<PingMsg>;
@@ -77,7 +79,7 @@ export const createAgentClient = async (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
     options: ListenOptions = defaultListenOptions,
     retryCount: number = 0
-  ): Promise<ClientID> => {
+  ): Promise<ClientReadableStream<AgentStatus>> => {
     const msg = getClientId();
     log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
 
@@ -96,7 +98,7 @@ export const createAgentClient = async (
         setTimeout(() => {
           startListening(handleStatus, options, newCount + 1).then(
             () => log.debug(`Listening started after ${timeout}ms`),
-            () => {}
+            () => { }
           );
         }, timeout);
 
@@ -127,7 +129,7 @@ export const createAgentClient = async (
                 handleStatus({ agent: status, protocol: protocolStatus });
                 if (
                   protocolStatus.getState()?.getState() ===
-                    ProtocolState.State.OK &&
+                  ProtocolState.State.OK &&
                   options.autoRelease
                 ) {
                   options.protocolClient
@@ -169,7 +171,7 @@ export const createAgentClient = async (
           waitAndRetry();
         }
       });
-      resolve(msg);
+      resolve(stream);
     });
   };
 
@@ -177,7 +179,7 @@ export const createAgentClient = async (
     handleQuestion: (question?: Question, err?: Error) => void,
     options: CallbackOptions = defaultCallbackOptions,
     retryCount: number = 0
-  ): Promise<ClientID> => {
+  ): Promise<ClientReadableStream<Question>> => {
     const msg = getClientId();
     log.debug(`Agent: start waiting ${JSON.stringify(msg.toObject())}`);
 
@@ -190,7 +192,7 @@ export const createAgentClient = async (
         setTimeout(() => {
           startWaiting(handleQuestion, options, newCount + 1).then(
             () => log.debug('Waiting started'),
-            () => {}
+            () => { }
           );
         }, timeout);
 
@@ -221,7 +223,7 @@ export const createAgentClient = async (
           waitAndRetry();
         }
       });
-      resolve(msg);
+      resolve(stream);
     });
   };
 
