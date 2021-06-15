@@ -31,8 +31,8 @@ jobs:
           FCLI_AGENCY_GRPC_TLS: 'true'
           FCLI_AGENCY_GRPC_CERT_PATH: '/grpc'
         volumes:
-          - ./config/steward.exported:/steward.exported
-          - ./config/cert:/grpc
+          - ${GITHUB_WORKSPACE}/e2e/config/steward.exported:/steward.exported
+          - ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc
       auth:
         image: ghcr.io/findy-network/findy-agent-auth:0.1.16
         ports:
@@ -42,4 +42,4 @@ jobs:
           FAA_ORIGIN: 'http://localhost:8088'
           FAA_AGENCY_ADDR: 'core'
         volumes:
-          - ./config/cert:/grpc
+          - ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc
