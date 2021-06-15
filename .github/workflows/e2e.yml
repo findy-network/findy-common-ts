@@ -8,6 +8,14 @@ jobs:
         node-version: [14.x]
     steps:
       - uses: actions/checkout@v2
+      - name: Restart core
+        uses: docker://docker
+        with:
+          args: docker restart core
+      - name: Restart auth
+        uses: docker://docker
+        with:
+          args: docker restart auth
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -30,9 +38,10 @@ jobs:
           FCLI_AGENCY_POOL_NAME: 'FINDY_FILE_LEDGER'
           FCLI_AGENCY_GRPC_TLS: 'true'
           FCLI_AGENCY_GRPC_CERT_PATH: '/grpc'
-        volumes:
-          - ${GITHUB_WORKSPACE}/e2e/config/steward.exported:/steward.exported
-          - ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc
+        options: |
+          -v ${GITHUB_WORKSPACE}/e2e/config/steward.exported:/steward.exported \
+          -v ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc \
+          --name core
       auth:
         image: ghcr.io/findy-network/findy-agent-auth:0.1.16
         ports:
@@ -41,5 +50,6 @@ jobs:
           FAA_ENABLE_CORS: 'true'
           FAA_ORIGIN: 'http://localhost:8088'
           FAA_AGENCY_ADDR: 'core'
-        volumes:
-          - ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc
+        options: |
+          -v ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc \
+          --name auth
