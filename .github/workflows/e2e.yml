@@ -8,14 +8,6 @@ jobs:
         node-version: [14.x]
     steps:
       - uses: actions/checkout@v2
-      - name: Restart core
-        uses: docker://docker
-        with:
-          args: docker restart core
-      - name: Restart auth
-        uses: docker://docker
-        with:
-          args: docker restart auth
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v2
         with:
@@ -23,33 +15,4 @@ jobs:
       - name: install deps
         run: npm ci
       - name: test
-        run: npm run build
-      - name: test
-        run: npm run e2e:test
-    services:
-      core:
-        image: ghcr.io/findy-network/findy-agent:0.24.15
-        ports:
-          - 8080:8080
-          - 50052:50051
-        env:
-          FCLI_POOL_GENESIS_TXN_FILE: ''
-          FCLI_POOL_NAME: 'FINDY_FILE_LEDGER'
-          FCLI_AGENCY_POOL_NAME: 'FINDY_FILE_LEDGER'
-          FCLI_AGENCY_GRPC_TLS: 'true'
-          FCLI_AGENCY_GRPC_CERT_PATH: '/grpc'
-        options: |
-          -v ${GITHUB_WORKSPACE}/e2e/config/steward.exported:/steward.exported \
-          -v ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc \
-          --name core
-      auth:
-        image: ghcr.io/findy-network/findy-agent-auth:0.1.16
-        ports:
-          - 8088:8888
-        env:
-          FAA_ENABLE_CORS: 'true'
-          FAA_ORIGIN: 'http://localhost:8088'
-          FAA_AGENCY_ADDR: 'core'
-        options: |
-          -v ${GITHUB_WORKSPACE}/e2e/config/cert:/grpc \
-          --name auth
+        run: npm run e2e
