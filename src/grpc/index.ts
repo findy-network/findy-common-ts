@@ -13,18 +13,54 @@ import metaProvider from './metadata';
 
 export type { AgentClient, ProtocolClient };
 
+/**
+ * Agency GRPC connection properties
+ * @public
+ */
 export interface ConnectionProps {
+  /**
+   * Path to TLS certificate root folder.
+   */
   certPath: string;
+  /**
+   * If false, server identity verification is skipped on
+   * GRPC connection initialisation. Use falsy value only
+   * in development setup.
+   * @defaultValue true
+   */
   verifyServerIdentity?: boolean; // this should be enabled on production
+  /**
+   * Agency GRPC server address.
+   */
   serverAddress: string;
+  /**
+   * Agency GRPC server port.
+   */
   serverPort: number;
 }
 
+/**
+ * Agency GRPC connection initialisator
+ * @public
+ */
 export interface Connection {
+  /**
+   * Creates agent client helper
+   */
   createAgentClient: () => Promise<AgentClient>;
+  /**
+   * Creates protocol client helper
+   */
   createProtocolClient: () => Promise<ProtocolClient>;
 }
 
+/**
+ * Initialises GRPC connection based on given properties.
+ * @public
+ *
+ * @param props - connection properties
+ * @param acator - initialised authenticator
+ */
 export const openGRPCConnection = async (
   {
     certPath,

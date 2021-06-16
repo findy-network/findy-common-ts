@@ -11,32 +11,72 @@ import log from '../log';
 
 import { unaryHandler } from './utils';
 
+/**
+ * Helper client for agency protocol service.
+ * @public
+ *
+ * @see {@link openGRPCConnection} for creating the client
+ * @see API documentation for more information on API usage
+ * {@link https://github.com/findy-network/findy-agent-api}
+ */
 export interface ProtocolClient {
   // TODO: run
 
+  /**
+   * Start asks the agency to start a protocol.
+   */
   start: (msg: Protocol) => Promise<ProtocolID>;
-  connect: (
-    msg: Protocol.DIDExchangeMsg
-  ) => Promise<ProtocolID>;
+  /**
+   * Helper wrapper for starting DIDExchange protocol
+   */
+  connect: (msg: Protocol.DIDExchangeMsg) => Promise<ProtocolID>;
+  /**
+   * Helper wrapper for starting BasicMessage protocol
+   */
   sendBasicMessage: (
     connectionId: string,
     msg: Protocol.BasicMessageMsg
   ) => Promise<ProtocolID>;
+  /**
+   * Helper wrapper for starting PresentProof protocol
+   */
   sendProofRequest: (
     connectionId: string,
     msg: Protocol.PresentProofMsg
   ) => Promise<ProtocolID>;
+  /**
+   * Helper wrapper for starting IssueCredential protocol
+   */
   sendCredentialOffer: (
     connectionId: string,
     msg: Protocol.IssueCredentialMsg
   ) => Promise<ProtocolID>;
 
+  /**
+   * Status returns a current ProtocolStatus
+   */
   status: (msg: ProtocolID) => Promise<ProtocolStatus>;
+
+  /**
+   * Resume resumes paused protocol
+   */
   resume: (msg: ProtocolState) => Promise<ProtocolID>;
+
+  /**
+   * Release releases successful protocol
+   */
   release: (msg: ProtocolID) => Promise<ProtocolID>;
+
+  /**
+   * Closes client connection.
+   */
   close: () => void;
 }
 
+/**
+ * Protocol client helper creator function
+ * @internal
+ */
 export const createProtocolClient = async (
   client: ProtocolServiceClient,
   { getMeta }: MetaProvider
@@ -49,9 +89,7 @@ export const createProtocolClient = async (
     });
   };
 
-  const connect = async (
-    msg: Protocol.DIDExchangeMsg
-  ): Promise<ProtocolID> => {
+  const connect = async (msg: Protocol.DIDExchangeMsg): Promise<ProtocolID> => {
     log.debug(`Protocol: connect as ${msg.getLabel()}`);
     const protocol = new Protocol();
     protocol.setTypeid(Protocol.Type.DIDEXCHANGE);
