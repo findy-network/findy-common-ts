@@ -272,8 +272,8 @@ export default (
 ): { start: () => void; stop: () => void } => {
   const server = new Server();
   const start = (): void => {
-    const pubKey = readFileSync(props.certPath);
-    const privKey = readFileSync('./tools/config/server.key');
+    const pubKey = readFileSync(`${props.certPath}/server/server.crt`);
+    const privKey = readFileSync(`${props.certPath}/server/server.key`);
     const creds = ServerCredentials.createSsl(null, [
       { private_key: privKey, cert_chain: pubKey }
     ]);

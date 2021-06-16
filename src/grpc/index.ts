@@ -11,9 +11,11 @@ import {
 import { Acator } from '../acator';
 import metaProvider from './metadata';
 
+export type { AgentClient, ProtocolClient }
+
 export interface ConnectionProps {
   certPath: string;
-  verifyServerIdentity: boolean; // this should be enabled on production
+  verifyServerIdentity?: boolean; // this should be enabled on production
   serverAddress: string;
   serverPort: number;
 }
@@ -35,9 +37,13 @@ export const openGRPCConnection = async (
   const meta = await metaProvider(acator);
 
   const getChannelCreds = (): ChannelCredentials => {
-    const rootCert = certPath !== '' ? fs.readFileSync(certPath) : null;
-    const args: any[] = [rootCert, null, null];
-    if (!verifyServerIdentity) {
+    const rootCert = certPath !== '' ? fs.readFileSync(`${certPath}/server/server.crt`) : null;
+    const clientKeyPath = `${certPath}/client/client.key`
+    const clientCertPath = `${certPath}/client/client.crt`
+    const clientKey = fs.existsSync(clientKeyPath) ? fs.readFileSync(clientKeyPath) : null;
+    const clientCert = fs.existsSync(clientCertPath) ? fs.readFileSync(clientCertPath) : null;
+    const args: any[] = [rootCert, clientKey, clientCert];
+    if (verifyServerIdentity != null && !verifyServerIdentity) {
       args.push({ checkServerIdentity: () => null });
     }
     return credentials.createSsl(...args);

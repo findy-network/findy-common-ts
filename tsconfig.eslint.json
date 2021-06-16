@@ -3,6 +3,10 @@
   "compilerOptions": {
     "allowJs": true
   },
-  "include": ["src/**/*s", "tools/**/*s"],
+  "include": [
+    "src/**/*s",
+    "tools/**/*s",
+    "e2e/**/*s"
+  ],
   "exclude": []
 }

@@ -15,6 +15,9 @@ export interface ProtocolClient {
   // TODO: run
 
   start: (msg: Protocol) => Promise<ProtocolID>;
+  connect: (
+    msg: Protocol.DIDExchangeMsg
+  ) => Promise<ProtocolID>;
   sendBasicMessage: (
     connectionId: string,
     msg: Protocol.BasicMessageMsg
@@ -44,6 +47,17 @@ export const createProtocolClient = async (
     return await new Promise((resolve, reject) => {
       client.start(msg, meta, unaryHandler('start', resolve, reject));
     });
+  };
+
+  const connect = async (
+    msg: Protocol.DIDExchangeMsg
+  ): Promise<ProtocolID> => {
+    log.debug(`Protocol: connect as ${msg.getLabel()}`);
+    const protocol = new Protocol();
+    protocol.setTypeid(Protocol.Type.DIDEXCHANGE);
+    protocol.setRole(Protocol.Role.INITIATOR);
+    protocol.setDidExchange(msg);
+    return await start(protocol);
   };
 
   const sendBasicMessage = async (
@@ -118,6 +132,7 @@ export const createProtocolClient = async (
 
   return {
     start,
+    connect,
     sendBasicMessage,
     sendProofRequest,
     sendCredentialOffer,
