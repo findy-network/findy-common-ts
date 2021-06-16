@@ -16,7 +16,7 @@ import {
   AgentStatus,
   Notification
 } from '../idl/agent_pb';
-import { ProtocolID, ProtocolState, ProtocolStatus } from '../idl/protocol_pb';
+import { ProtocolID, ProtocolStatus } from '../idl/protocol_pb';
 
 import log from '../log';
 import { MetaProvider } from './metadata';
@@ -75,104 +75,111 @@ export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta, getClientId }: MetaProvider
 ): Promise<AgentClient> => {
-  const startListening = async (
+  const protocolStatusHandler =
+    (protocolClient: ProtocolClient, autoRelease: boolean) =>
+    async (
+      notification: Notification,
+      handleStatus: (status: ProtocolStatus) => void
+    ): Promise<void> => {
+      const msg = new ProtocolID();
+      msg.setId(notification.getProtocolid());
+      msg.setTypeid(notification.getProtocolType());
+      msg.setRole(notification.getRole());
+      try {
+        const protocolStatus = await protocolClient.status(msg);
+        handleStatus(protocolStatus);
+        if (autoRelease) {
+          await protocolClient.release(msg);
+          log.debug('Protocol released successfully');
+        }
+      } catch (err) {
+        log.error(`Error handling protocol status ${JSON.stringify(err)}`);
+      }
+    };
+
+  const agentStatusHandler = (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
+    options: ListenOptions
+  ): ((status: AgentStatus) => void) => {
+    const { autoProtocolStatus, protocolClient, filterKeepalive, autoRelease } =
+      options;
+    if (autoProtocolStatus && protocolClient == null) {
+      throw new Error(
+        'Set valid protocol client when using auto protocol status'
+      );
+    }
+
+    const handleProtocolStatus =
+      protocolClient != null
+        ? protocolStatusHandler(protocolClient, autoRelease)
+        : () => {};
+
+    return (status: AgentStatus) => {
+      log.debug(`Received status ${JSON.stringify(status.toObject())}`);
+      const notification = status.getNotification() ?? new Notification();
+
+      const filterMsg =
+        filterKeepalive &&
+        notification.getTypeid() === Notification.Type.KEEPALIVE;
+      const fetchProtocolStatus =
+        autoProtocolStatus &&
+        notification.getTypeid() === Notification.Type.STATUS_UPDATE;
+
+      if (!filterMsg) {
+        if (fetchProtocolStatus && protocolClient != null) {
+          // eslint-disable-next-line no-void
+          void handleProtocolStatus(notification, (protocolStatus) =>
+            handleStatus({ agent: status, protocol: protocolStatus })
+          );
+        } else if (!fetchProtocolStatus) {
+          handleStatus({ agent: status });
+        }
+      }
+    };
+  };
+
+  const startListening = async (
+    sendStatus: (status?: ListenStatus, err?: Error) => void,
     options: ListenOptions = defaultListenOptions,
     retryCount: number = 0
   ): Promise<ClientReadableStream<AgentStatus>> => {
     const msg = getClientId();
     log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
 
-    if (options.autoProtocolStatus && options.protocolClient == null) {
-      throw new Error(
-        'Set valid protocol client when using auto protocol status'
-      );
-    }
-
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
-    return await new Promise((resolve) => {
-      const stream = client.listen(msg, meta);
-      let newCount = retryCount;
-      const waitAndRetry = (): NodeJS.Timeout =>
-        setTimeout(() => {
-          startListening(handleStatus, options, newCount + 1).then(
-            () => log.debug(`Listening started after ${timeout}ms`),
-            () => { }
-          );
-        }, timeout);
+    let newCount = retryCount;
+    const waitAndRetry = (): NodeJS.Timeout =>
+      setTimeout(() => {
+        // eslint-disable-next-line no-void
+        void startListening(sendStatus, options, newCount + 1);
+      }, timeout);
 
-      stream.on('data', (status: AgentStatus) => {
-        newCount = 0;
+    const handleAgentStatus = agentStatusHandler(sendStatus, options);
 
-        log.debug(`Received status ${JSON.stringify(status.toObject())}`);
-        const notification = status.getNotification() ?? new Notification();
+    const stream = client.listen(msg, meta);
 
-        const filterMsg =
-          options.filterKeepalive &&
-          notification.getTypeid() === Notification.Type.KEEPALIVE;
-        const fetchProtocolStatus =
-          options.autoProtocolStatus &&
-          options.protocolClient != null &&
-          notification.getTypeid() === Notification.Type.STATUS_UPDATE;
-
-        // TODO: refactor
-        if (!filterMsg) {
-          if (fetchProtocolStatus) {
-            const msg = new ProtocolID();
-            msg.setId(notification.getProtocolid());
-            msg.setTypeid(notification.getProtocolType());
-            msg.setRole(notification.getRole());
-            options.protocolClient
-              ?.status(msg)
-              .then((protocolStatus) => {
-                handleStatus({ agent: status, protocol: protocolStatus });
-                if (
-                  protocolStatus.getState()?.getState() ===
-                  ProtocolState.State.OK &&
-                  options.autoRelease
-                ) {
-                  options.protocolClient
-                    ?.release(msg)
-                    .then(() => {
-                      log.debug('Protocol released successfully');
-                    })
-                    .catch((err) => {
-                      log.error(
-                        `Error releasing protocol ${JSON.stringify(err)}`
-                      );
-                    });
-                }
-              })
-              .catch((err) => {
-                log.error(
-                  `Error fetching protocol status ${JSON.stringify(err)}`
-                );
-              });
-          }
-          if (!fetchProtocolStatus) {
-            handleStatus({ agent: status });
-          }
-        }
-      });
-
-      stream.on('error', (err) => {
-        log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
-        if (!options.retryOnError) {
-          handleStatus(undefined, err);
-        }
-        stream.cancel();
-      });
-      stream.on('end', () => {
-        log.error(`Streaming ended when listening.`);
-        stream.cancel();
-        if (options.retryOnError) {
-          log.error(`Retry listening...`);
-          waitAndRetry();
-        }
-      });
-      resolve(stream);
+    stream.on('data', (status: AgentStatus) => {
+      newCount = 0;
+      handleAgentStatus(status);
     });
+
+    stream.on('error', (err) => {
+      log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+      if (!options.retryOnError) {
+        sendStatus(undefined, err);
+      }
+      stream.cancel();
+    });
+    stream.on('end', () => {
+      log.error(`Streaming ended when listening.`);
+      stream.cancel();
+      if (options.retryOnError) {
+        log.error(`Retry listening...`);
+        waitAndRetry();
+      }
+    });
+    return stream;
   };
 
   const startWaiting = async (
@@ -185,46 +192,44 @@ export const createAgentClient = async (
 
     const meta = await getMeta();
     const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
-    return await new Promise((resolve) => {
-      const stream = client.wait(msg, meta);
-      let newCount = retryCount;
-      const waitAndRetry = (): NodeJS.Timeout =>
-        setTimeout(() => {
-          startWaiting(handleQuestion, options, newCount + 1).then(
-            () => log.debug('Waiting started'),
-            () => { }
-          );
-        }, timeout);
+    const stream = client.wait(msg, meta);
+    let newCount = retryCount;
+    const waitAndRetry = (): NodeJS.Timeout =>
+      setTimeout(() => {
+        startWaiting(handleQuestion, options, newCount + 1).then(
+          () => log.debug(`Waiting started after ${timeout}ms`),
+          () => {}
+        );
+      }, timeout);
 
-      stream.on('data', (question: Question) => {
-        newCount = 0;
-        log.debug(`Received question ${JSON.stringify(question.toObject())}`);
+    stream.on('data', (question: Question) => {
+      newCount = 0;
+      log.debug(`Received question ${JSON.stringify(question.toObject())}`);
 
-        const filterMsg =
-          options.filterKeepalive &&
-          question.getTypeid() === Question.Type.KEEPALIVE;
+      const filterMsg =
+        options.filterKeepalive &&
+        question.getTypeid() === Question.Type.KEEPALIVE;
 
-        if (!filterMsg) {
-          handleQuestion(question);
-        }
-      });
-      stream.on('error', (err) => {
-        log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
-        if (!options.retryOnError) {
-          handleQuestion(undefined, err);
-        }
-        stream.cancel();
-      });
-      stream.on('end', () => {
-        log.error(`Streaming ended when waiting.`);
-        stream.cancel();
-        if (options.retryOnError) {
-          log.error(`Retry waiting...`);
-          waitAndRetry();
-        }
-      });
-      resolve(stream);
+      if (!filterMsg) {
+        handleQuestion(question);
+      }
     });
+    stream.on('error', (err) => {
+      log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+      if (!options.retryOnError) {
+        handleQuestion(undefined, err);
+      }
+      stream.cancel();
+    });
+    stream.on('end', () => {
+      log.error(`Streaming ended when waiting.`);
+      stream.cancel();
+      if (options.retryOnError) {
+        log.error(`Retry waiting...`);
+        waitAndRetry();
+      }
+    });
+    return stream;
   };
 
   const give = async (msg: Answer): Promise<ClientID> => {
