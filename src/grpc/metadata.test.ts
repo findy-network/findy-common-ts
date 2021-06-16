@@ -15,7 +15,7 @@ describe('token', () => {
     const headerOne = metaOne.get('Authorization')[0];
     expect(headerOne).toBeDefined();
 
-    expTime = '0s';
+    expTime = '2000s';
     const metaTwo = await provider.getMeta();
     const headerTwo = metaTwo.get('Authorization')[0];
     expect(headerTwo).toBeDefined();
@@ -24,14 +24,14 @@ describe('token', () => {
   });
 
   it('should renew token', async () => {
-    expTime = '1s';
+    expTime = '0s';
     const provider = await metaProvider(acator);
     const metaOne = await provider.getMeta();
 
     const headerOne = metaOne.get('Authorization')[0];
     expect(headerOne).toBeDefined();
 
-    expTime = '0s';
+    expTime = '2000s';
     const metaTwo = await provider.getMeta();
     const headerTwo = metaTwo.get('Authorization')[0];
     expect(headerTwo).toBeDefined();
