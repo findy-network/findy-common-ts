@@ -1,22 +1,40 @@
 name: test
 on: push
-env:
-  FINDY_CTS_RETRY_TIMEOUT_SECS: 1
 jobs:
   test:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        node-version: [14.x]
     steps:
       - uses: actions/checkout@v2
-      - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v2
+      - uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: '14.x'
       - name: install deps
         run: npm ci --ignore-scripts
       - name: build
         run: npm run build
       - name: test
         run: npm test
+    env:
+      FINDY_CTS_RETRY_TIMEOUT_SECS: 1
+  license-check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - name: install deps
+        run: npm ci --ignore-scripts
+      - name: run check
+        run: npm run licenses:check
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2
+        with:
+          node-version: '14.x'
+      - name: install deps
+        run: npm ci --ignore-scripts
+      - name: test
+        run: npm run e2e
