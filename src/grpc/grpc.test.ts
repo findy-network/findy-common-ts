@@ -16,12 +16,12 @@ import { ConnectionProps, openGRPCConnection as grpc } from './index';
 import testServer, { getToken } from './test-utils';
 import { Protocol, ProtocolID, ProtocolState } from '../idl/protocol_pb';
 
-const port = 50052;
+const port = 50053;
 
 const props: ConnectionProps = {
   serverAddress: 'localhost',
   serverPort: port,
-  certPath: './tools/config/server.crt',
+  certPath: './tools/config/cert',
   verifyServerIdentity: false
 };
 
@@ -58,8 +58,8 @@ describe('GRPC', () => {
             s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -74,8 +74,8 @@ describe('GRPC', () => {
             s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -90,8 +90,8 @@ describe('GRPC', () => {
             q != null ? resolve(q) : reject(err);
           })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = question.getStatus() ?? new AgentStatus();
@@ -106,8 +106,8 @@ describe('GRPC', () => {
             q != null ? resolve(q) : reject(err);
           })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = question.getStatus() ?? new AgentStatus();

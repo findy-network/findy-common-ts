@@ -10,7 +10,7 @@ describe('e2e', () => {
     const key = "15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c";
     const serverAddress = "localhost";
     const serverPort = 50052;
-    const certPath = "./e2e/config/cert";
+    const certPath = "./tools/config/cert";
     const createClients = async (user: string) => {
         const acatorProps = {
             authUrl,
@@ -33,6 +33,7 @@ describe('e2e', () => {
         return { agentClient, protocolClient };
     };
     it('should connect', async () => {
+        // Set up agents
         const user1 = await createClients(user1Name);
         expect(user1.agentClient).toBeDefined();
         expect(user1.protocolClient).toBeDefined();
@@ -46,6 +47,7 @@ describe('e2e', () => {
         invMsg.setLabel(user1Name);
         invMsg.setId(newId);
 
+        // Wait for new connection
         let connectionId: string | undefined = undefined;
         const user1Stream = await user1.agentClient.startListening(
             async (status) => {
@@ -81,6 +83,7 @@ describe('e2e', () => {
         const pwResult = await user2.protocolClient.connect(pwMsg);
         expect(pwResult).toBeDefined();
 
+        // ensure connection id matches
         const id = await (new Promise(resolve => {
             const checkConnectionId = () => {
                 if (connectionId != undefined) {
@@ -94,6 +97,7 @@ describe('e2e', () => {
         expect(JSON.parse(invResult.getJson())["@id"]).toEqual(id)
 
 
+        // wait for basic message
         let msg: string | undefined = undefined;
         const user2Stream = await user2.agentClient.startListening(
             async (status) => {
@@ -125,6 +129,7 @@ describe('e2e', () => {
         const msgResult = await user1.protocolClient.sendBasicMessage(connectionId!, basicMsg);
         expect(msgResult).toBeDefined();
 
+        // ensure basic message matches
         const receivedMessage = await (new Promise(resolve => {
             const checkMsg = () => {
                 if (msg != undefined) {
@@ -137,6 +142,7 @@ describe('e2e', () => {
         }))
         expect(receivedMessage).toEqual(testMessage)
 
+        // stop streams
         user1Stream.cancel()
         user2Stream.cancel()
 

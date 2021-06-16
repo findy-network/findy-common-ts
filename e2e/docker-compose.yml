@@ -3,9 +3,9 @@ services:
   core:
     image: ghcr.io/findy-network/findy-agent:latest
     volumes:
-      - ./config/steward.exported:/steward.exported
-      - ./config/cert:/grpc
-      - .data/agent:/root
+      - ../tools/config/steward.exported:/steward.exported
+      - ../tools/config/cert:/grpc
+      - ../.data/agent:/root
     environment:
       FCLI_POOL_GENESIS_TXN_FILE: ''
       FCLI_POOL_NAME: 'FINDY_FILE_LEDGER'
@@ -18,8 +18,8 @@ services:
   auth:
     image: ghcr.io/findy-network/findy-agent-auth:latest
     volumes:
-      - ./config/cert:/grpc
-      - .data/auth:/data
+      - ../tools/config/cert:/grpc
+      - ../.data/auth:/data
     depends_on:
       - core
     environment:
