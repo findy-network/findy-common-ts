@@ -11,6 +11,8 @@ import {
 import { Acator } from '../acator';
 import metaProvider from './metadata';
 
+export type { AgentClient, ProtocolClient }
+
 export interface ConnectionProps {
   certPath: string;
   verifyServerIdentity?: boolean; // this should be enabled on production

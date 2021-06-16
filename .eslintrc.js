@@ -1,7 +1,7 @@
 module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
-  ignorePatterns: ['src/idl', 'e2e/*'],
+  ignorePatterns: ['src/idl'],
   plugins: ['@typescript-eslint', 'jest'],
   extends: [
     'standard-with-typescript',
