@@ -8,29 +8,6 @@ import {
   ProtocolClient
 } from '../dist/index';
 
-const waitForResult = (): {
-  setResult: (value: any) => void;
-  wait: () => Promise<any>;
-} => {
-  let result: any;
-  return {
-    setResult: (value: any) => {
-      result = value;
-    },
-    wait: async (): Promise<any> =>
-      await new Promise((resolve): void => {
-        const checkResult = (): void => {
-          if (result !== undefined) {
-            resolve(result);
-          } else {
-            setTimeout(checkResult, 100);
-          }
-        };
-        checkResult();
-      })
-  };
-};
-
 describe('e2e', () => {
   const authUrl = 'http://localhost:8088';
   const user1Name = `user-1-${new Date().getTime()}`;
@@ -63,6 +40,30 @@ describe('e2e', () => {
     const protocolClient = await createProtocolClient();
     return { agentClient, protocolClient };
   };
+
+  const waitForResult = (): {
+    setResult: (value: any) => void;
+    wait: () => Promise<any>;
+  } => {
+    let result: any;
+    return {
+      setResult: (value: any) => {
+        result = value;
+      },
+      wait: async (): Promise<any> =>
+        await new Promise((resolve): void => {
+          const checkResult = (): void => {
+            if (result !== undefined) {
+              resolve(result);
+            } else {
+              setTimeout(checkResult, 100);
+            }
+          };
+          checkResult();
+        })
+    };
+  };
+
   it('should connect', async () => {
     // Set up agents
     const user1 = await createClients(user1Name);

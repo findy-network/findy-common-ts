@@ -2,7 +2,7 @@ module.exports = {
   root: true,
   parser: '@typescript-eslint/parser',
   ignorePatterns: ['src/idl'],
-  plugins: ['@typescript-eslint', 'jest'],
+  plugins: ['@typescript-eslint', 'jest', 'eslint-plugin-tsdoc'],
   extends: [
     'standard-with-typescript',
     'prettier',
@@ -13,5 +13,5 @@ module.exports = {
   parserOptions: {
     project: ['./tsconfig.eslint.json']
   },
-  rules: {}
+  rules: { 'tsdoc/syntax': 'warn' }
 };

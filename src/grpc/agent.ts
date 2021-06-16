@@ -25,27 +25,150 @@ import { unaryHandler } from './utils';
 
 const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
 
+/**
+ * Helper client for agency agent service.
+ * @public
+ *
+ * @see {@link openGRPCConnection} for creating the client
+ * @see API documentation for more information on API usage
+ * {@link https://github.com/findy-network/findy-agent-api}
+ */
 export interface AgentClient {
+  /**
+   * Starts listening agent status notification stream.
+   * This helper is intended for long-term agent listening
+   * e.g. for constantly running web services. It
+   * notifies the caller using the provided callback function.
+   * @see {@link ListenOptions} for configuration options.
+   *
+   * @example
+   * ```
+   * const options = {
+   *   retryOnError: true,
+   *   autoProtocolStatus: false,
+   *   filterKeepalive: true
+   * };
+   *
+   * await agentClient.startListening(
+   *  (status) => {
+   *    const notification = status?.agent.getNotification();
+   *    if (
+   *      notification?.getTypeid() ===
+   *        agencyv1.Notification.Type.STATUS_UPDATE &&
+   *      notification?.getProtocolType() ===
+   *        agencyv1.Protocol.Type.DIDEXCHANGE &&
+   *      state === agencyv1.ProtocolState.State.OK
+   *    ) {
+   *      console.log("We have established a new pairwise connection!")
+   *    }
+   *  }, options);
+   * ```
+   *
+   * @param handleStatus - callback function
+   * @param options - listening configuration
+   * @returns notification stream when in need for advanced use
+   */
   startListening: (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
     options?: ListenOptions
   ) => Promise<ClientReadableStream<AgentStatus>>;
+
+  /**
+   * Starts waiting for issuing/verifying related questions.
+   * This helper is intended for long-term agent waiting
+   * e.g. for constantly running web services. It
+   * notifies the caller using the provided callback function.
+   * @see {@link CallbackOptions} for configuration options.
+   *
+   * Note! This approach will be probably deprecated in the future
+   * and question handling will be moved to protocol service.
+   *
+   * @param handleQuestion - callback function
+   * @param options - waiting configuration
+   * @returns question stream when in need for advanced use
+   */
   startWaiting: (
     handleQuestion: (question?: Question, err?: Error) => void,
     options?: CallbackOptions
   ) => Promise<ClientReadableStream<Question>>;
+
+  /**
+   * Give is used for answering the questions arrived through waiting stream.
+   * @see {@link startWaiting}
+   *
+   * @param msg - answer
+   * @returns client id
+   */
   give: (msg: Answer) => Promise<ClientID>;
+
+  /**
+   * Creates Aries invitation that can be shown/sent to another agent for new
+   * establishing a new pairwise connection.
+   *
+   * @param msg - invitation data
+   * @returns Aries invitation as JSON string
+   */
   createInvitation: (msg: InvitationBase) => Promise<Invitation>;
+
+  /**
+   * Pings the cloud agent to test if the connection to our agent is ok.
+   *
+   * @returns ping message
+   */
   ping: () => Promise<PingMsg>;
+
+  /**
+   * Creates new schema to the ledger.
+   *
+   * @param msg - schema data
+   * @returns schema id
+   */
   createSchema: (msg: SchemaCreate) => Promise<Schema>;
+
+  /**
+   * Creates new credential defition to the ledger.
+   *
+   * @param msg - cred def data
+   * @returns cred def id
+   */
   createCredDef: (msg: CredDefCreate) => Promise<CredDefData>;
+
+  /**
+   * Returns schema data for schema id.
+   *
+   * @param msg - schema id
+   * @returns schema data
+   */
   getSchema: (msg: Schema) => Promise<SchemaData>;
+
+  /**
+   * Returns credential defitiniton data for credential definition id.
+   *
+   * @param msg - cred def id
+   * @returns cred def data
+   */
   getCredDef: (msg: CredDef) => Promise<CredDefData>;
+
+  /**
+   * Closes client connection.
+   */
   close: () => void;
 }
 
+/**
+ * Callback options
+ * @public
+ */
 export interface CallbackOptions {
+  /**
+   * If true, connection is retried exponentially on connection error.
+   * @defaultValue true
+   */
   retryOnError: boolean;
+  /**
+   * If true, keepalive messages are filtered out from status callbacks.
+   * @defaultValue true
+   */
   filterKeepalive: boolean;
 }
 
@@ -54,9 +177,27 @@ const defaultCallbackOptions = {
   filterKeepalive: true
 };
 
+/**
+ * Listening options
+ * @public
+ */
 export interface ListenOptions extends CallbackOptions {
+  /**
+   * If true, succesful protocol is automatically released.
+   * This setting is effective only when {@link autoProtocolStatus} is true.
+   * @defaultValue false
+   */
   autoRelease: boolean;
+  /**
+   * If true, protocol status information is fetched automatically.
+   * When true, {@link protocolClient} needs to be set as well.
+   * @defaultValue false
+   */
   autoProtocolStatus: boolean;
+  /**
+   * Protocol client for fetching protocol status.
+   * @defaultValue undefined
+   */
   protocolClient?: ProtocolClient;
 }
 
@@ -66,11 +207,25 @@ const defaultListenOptions = {
   autoProtocolStatus: false
 };
 
+/**
+ * Agent callback status structure
+ * @public
+ */
 export interface ListenStatus {
+  /**
+   * Agent notification status
+   */
   agent: AgentStatus;
+  /**
+   * Protocol notification status, if autoProtocolStatus is true
+   */
   protocol?: ProtocolStatus;
 }
 
+/**
+ * Agent client helper creator function
+ * @internal
+ */
 export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta, getClientId }: MetaProvider
