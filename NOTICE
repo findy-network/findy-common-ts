@@ -3,7 +3,3 @@ Copyright 2021 OP Financial Group
 
 This product includes software developed at
 OP Osuuskunta (https://www.op.fi/).
-
-This product utilises many other great open source libraries.
-See section "dependencies" in the file package.json
-for the list of the software packages which are used.
