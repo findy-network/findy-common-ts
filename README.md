@@ -15,12 +15,30 @@ The focus is to provide utilities especially long-running webapps that intend to
 
 ## Usage
 
-```sh
-# TODO: .npmrc for packages location
-npm install @findy-network/findy-common-ts
-```
+1. [Setup](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token) GitHub package registry authentication
+
+1. Run
+
+   ```sh
+   echo "@findy-network:registry=https://npm.pkg.github.com" >> .npmrc
+   npm install @findy-network/findy-common-ts
+   ```
+
+1. Either use cloud agency installation or [setup agency to your local environment](https://github.com/findy-network/findy-wallet-pwa/blob/master/tools/env/README.md#agency-setup-for-local-development).
+   You need following settings for a successful connection (_defaults for local_):
+
+   - Authentication service URL (_`http://localhost:8088`_)
+   - Core agency server address (_`localhost`_)
+   - Core agency server port (_`50052`_)
+   - Path to core agency TLS cert files (_`/path/to/this/repo/tools/config/cert`_)
+
+1. Check [example](#example) how to authenticate to agency and connect to other agents using the library. More advanced examples can be found in [sample webapp implementation](https://github.com/findy-network/findy-issuer-tool).
 
 ## Example
+
+This example shows how to onboard an agent to Findy agency, create invitation and send a basic message to the new connection once the connection is established.
+
+For more examples, check [e2e tests](./e2e) or sample webapp implementation: [issuer-tool](https://github.com/findy-network/findy-issuer-tool).
 
 ```ts
 import {
@@ -38,7 +56,9 @@ const start = async (): Promise<void> => {
   const serverPort = 50052;
   const certPath = './tools/config/cert';
 
-  // Create authenticator
+  // Create authenticator.
+  // Authenticator onboards the agent automatically if this is the first time
+  // we are connecting to auth service.
   const acatorProps = {
     authUrl,
     userName,
@@ -46,7 +66,7 @@ const start = async (): Promise<void> => {
   };
   const authenticator = createAcator(acatorProps);
 
-  // Open GRPC connection
+  // Open GRPC connection to core agency
   const grpcProps = {
     serverAddress,
     serverPort,
@@ -85,6 +105,8 @@ const start = async (): Promise<void> => {
     }
   }, options);
 
+  // Create invitation. Copy the invitation from the console and use it to connect e.g.
+  // with web wallet user.
   const newId = uuidv4();
   const invMsg = new agencyv1.InvitationBase();
   invMsg.setLabel(userName);
