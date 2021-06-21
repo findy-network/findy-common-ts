@@ -80,7 +80,7 @@ export const createAcator = (
   // TODO: counter and guid for production setup
   const config: { [key: string]: string } = {
     url: authUrl,
-    origin: authOrigin ?? '',
+    ...(authOrigin != null ? { origin: authOrigin } : {}),
     'user-name': userName,
     key
   };
