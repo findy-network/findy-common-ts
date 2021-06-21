@@ -7,7 +7,7 @@ import tar from 'tar';
 
 import log from '../../log';
 
-export const CLI_VERSION = 'v0.24.13';
+export const CLI_VERSION = 'v0.24.15';
 export const outputPath = './bin';
 
 export default async (platform: string, arch: string): Promise<string> => {
