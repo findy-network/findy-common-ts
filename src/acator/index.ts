@@ -12,6 +12,10 @@ export interface AcatorProps {
    */
   authUrl: string;
   /**
+   * Origin URL for the authentication service - for development.
+   */
+  authOrigin?: string;
+  /**
    * The name of our agent. Note! This name must be unique within other Findy Agency users.
    */
   userName: string;
@@ -70,12 +74,13 @@ const doExec = async (cmd: string): Promise<string> => {
  * @param props - Authenticator properties. @see {@link AcatorProps}
  */
 export const createAcator = (
-  { authUrl, userName, key }: AcatorProps,
+  { authUrl, authOrigin, userName, key }: AcatorProps,
   exec = doExec
 ): Acator => {
   // TODO: counter and guid for production setup
   const config: { [key: string]: string } = {
     url: authUrl,
+    origin: authOrigin ?? '',
     'user-name': userName,
     key
   };
