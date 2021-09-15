@@ -107,10 +107,8 @@ const start = async (): Promise<void> => {
 
   // Create invitation. Copy the invitation from the console and use it to connect e.g.
   // with web wallet user.
-  const newId = uuidv4();
   const invMsg = new agencyv1.InvitationBase();
   invMsg.setLabel(userName);
-  invMsg.setId(newId);
   const invResult = await agentClient.createInvitation(invMsg);
   console.log(
     'Connect using this invitation and I will greet you!',

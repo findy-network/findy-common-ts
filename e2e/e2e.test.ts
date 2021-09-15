@@ -1,5 +1,3 @@
-import { v4 as uuidv4 } from 'uuid';
-
 import {
   createAcator,
   openGRPCConnection,
@@ -74,10 +72,8 @@ describe('e2e', () => {
     expect(user2.agentClient).toBeDefined();
     expect(user2.protocolClient).toBeDefined();
 
-    const newId = uuidv4();
     const invMsg = new agencyv1.InvitationBase();
     invMsg.setLabel(user1Name);
-    invMsg.setId(newId);
 
     // Wait for new connection
     const connectionId = waitForResult();
@@ -89,9 +85,9 @@ describe('e2e', () => {
 
         if (
           notification?.getTypeid() ===
-            agencyv1.Notification.Type.STATUS_UPDATE &&
+          agencyv1.Notification.Type.STATUS_UPDATE &&
           notification?.getProtocolType() ===
-            agencyv1.Protocol.Type.DIDEXCHANGE &&
+          agencyv1.Protocol.Type.DIDEXCHANGE &&
           state === agencyv1.ProtocolState.State.OK
         ) {
           connectionId.setResult(protocolStatus?.getDidExchange()?.getId());
@@ -129,9 +125,9 @@ describe('e2e', () => {
 
         if (
           notification?.getTypeid() ===
-            agencyv1.Notification.Type.STATUS_UPDATE &&
+          agencyv1.Notification.Type.STATUS_UPDATE &&
           notification?.getProtocolType() ===
-            agencyv1.Protocol.Type.BASIC_MESSAGE &&
+          agencyv1.Protocol.Type.BASIC_MESSAGE &&
           state === agencyv1.ProtocolState.State.OK
         ) {
           msg.setResult(protocolStatus?.getBasicMessage()?.getContent());
