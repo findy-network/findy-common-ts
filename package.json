@@ -47,7 +47,7 @@
   "homepage": "https://github.com/findy-network/findy-common-ts#readme",
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
-    "@types/jest": "^27.0.1",
+    "@types/jest": "^27.0.2",
     "@types/jsonwebtoken": "^8.5.5",
     "@types/tar": "^4.0.5",
     "@types/uuid": "^8.3.1",
