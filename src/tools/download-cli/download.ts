@@ -6,7 +6,7 @@ import tar from 'tar';
 
 import log from '../../log';
 
-export const CLI_VERSION = 'v0.24.15';
+export const CLI_VERSION = 'v0.24.18';
 export const outputPath = './bin';
 
 interface GithubRelease {
@@ -22,7 +22,7 @@ export default async (platform: string, arch: string): Promise<string> => {
   const user = 'findy-network';
   const repo = 'findy-agent-cli';
 
-  log.info(`Download binary for ${platform} - ${arch}`);
+  log.info(`Download binary ${CLI_VERSION} for ${platform} - ${arch}`);
 
   const filterRelease = (item: GithubRelease): boolean =>
     item.tag_name === CLI_VERSION;
