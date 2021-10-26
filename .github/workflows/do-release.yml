@@ -1,0 +1,17 @@
+on:
+  schedule:
+    - cron: '0 1 * * 1-5' # run at 1 AM UTC on weekdays
+  workflow_dispatch:
+
+jobs:
+  releaser:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    name: Release if changes
+    steps:
+      - uses: findy-network/releaser-action@v1
+        with:
+          # use personal access token so that events are created for tag push
+          token: ${{ secrets.PAT }}
+          # TODO: run only if tests for latest dev have succeeded
