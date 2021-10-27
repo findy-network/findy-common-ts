@@ -22,7 +22,6 @@
     "preinstall": "npm install --ignore-scripts && node ./dist/tools/download-cli/index.js",
     "update:deps": "npm-outdated-to-latest",
     "update:proto": "./tools/gen-proto.sh",
-    "release:patch": "./tools/release.sh patch",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "eslint ./src && eslint ./tools && eslint ./e2e",
     "test:unit": "jest ./src --coverage",
