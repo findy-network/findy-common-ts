@@ -1,3 +1,4 @@
+name: tag-release
 on:
   schedule:
     - cron: '0 1 * * 1-5' # run at 1 AM UTC on weekdays
@@ -6,7 +7,7 @@ on:
 jobs:
   tag-release:
     runs-on: ubuntu-latest
-    name: Tag release if changes between dev and master
+    name: Tag release if changes
     steps:
       - uses: findy-network/releaser-action@v2
         with:
