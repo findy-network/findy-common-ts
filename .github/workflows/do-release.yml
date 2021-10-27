@@ -4,14 +4,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  releaser:
+  tag-release:
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    name: Release if changes
+    name: Tag release if changes between dev and master
     steps:
-      - uses: findy-network/releaser-action@v1
+      - uses: findy-network/releaser-action@v2
         with:
           # use personal access token so that events are created for tag push
-          token: ${{ secrets.PAT }}
-          # TODO: run only if tests for latest dev have succeeded
+          token: ${{ secrets.RELEASER_PAT }}
+          gate: test

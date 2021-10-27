@@ -1,5 +1,7 @@
 # findy-common-ts
 
+[![test](https://github.com/findy-network/findy-common-ts/actions/workflows/test.yml/badge.svg?branch=dev)](https://github.com/findy-network/findy-common-ts/actions/workflows/test.yml)
+
 Module that provides common findy-agent usage functionality.
 
 ## Description
