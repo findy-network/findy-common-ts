@@ -20,6 +20,10 @@ export interface AcatorProps {
    */
   userName: string;
   /**
+   * Seed for the identity public DID, if endorser is preregistered.
+   */
+  seed?: string;
+  /**
    * Authenticator master key. Keep the key secret.
    */
   key: string;
@@ -74,7 +78,7 @@ const doExec = async (cmd: string): Promise<string> => {
  * @param props - Authenticator properties. @see {@link AcatorProps}
  */
 export const createAcator = (
-  { authUrl, authOrigin, userName, key }: AcatorProps,
+  { authUrl, authOrigin, userName, seed, key }: AcatorProps,
   exec = doExec
 ): Acator => {
   // TODO: counter and guid for production setup
@@ -82,6 +86,7 @@ export const createAcator = (
     url: authUrl,
     ...(authOrigin != null && authOrigin !== '' ? { origin: authOrigin } : {}),
     'user-name': userName,
+    ...(seed != null ? { seed }: {}),
     key
   };
   const rootCmd = 'findy-common-ts authn';

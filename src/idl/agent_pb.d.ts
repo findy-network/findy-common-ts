@@ -20,7 +20,7 @@ export class ModeCmd extends jspb.Message {
     getAcceptMode(): ModeCmd.AcceptModeCmd | undefined;
     setAcceptMode(value?: ModeCmd.AcceptModeCmd): ModeCmd;
 
-    getControlCmdCase(): ModeCmd.ControlCmdCase;
+    getControlcmdCase(): ModeCmd.ControlcmdCase;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): ModeCmd.AsObject;
@@ -75,7 +75,7 @@ export namespace ModeCmd {
     }
 
 
-    export enum ControlCmdCase {
+    export enum ControlcmdCase {
         CONTROLCMD_NOT_SET = 0,
         ACCEPT_MODE = 4,
     }

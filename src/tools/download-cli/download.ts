@@ -6,7 +6,7 @@ import tar from 'tar';
 
 import log from '../../log';
 
-export const CLI_VERSION = 'v0.24.18';
+export const CLI_VERSION = 'v0.24.20';
 export const outputPath = './bin';
 
 interface GithubRelease {

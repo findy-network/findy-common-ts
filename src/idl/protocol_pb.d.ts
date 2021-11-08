@@ -36,7 +36,7 @@ export class Protocol extends jspb.Message {
     getBasicMessage(): Protocol.BasicMessageMsg | undefined;
     setBasicMessage(value?: Protocol.BasicMessageMsg): Protocol;
 
-    getStartMsgCase(): Protocol.StartMsgCase;
+    getStartmsgCase(): Protocol.StartmsgCase;
 
     serializeBinary(): Uint8Array;
     toObject(includeInstance?: boolean): Protocol.AsObject;
@@ -145,7 +145,7 @@ export namespace Protocol {
         getAttributes(): Protocol.IssuingAttributes | undefined;
         setAttributes(value?: Protocol.IssuingAttributes): IssueCredentialMsg;
 
-        getAttrFmtCase(): IssueCredentialMsg.AttrFmtCase;
+        getAttrfmtCase(): IssueCredentialMsg.AttrfmtCase;
 
         serializeBinary(): Uint8Array;
         toObject(includeInstance?: boolean): IssueCredentialMsg.AsObject;
@@ -164,7 +164,7 @@ export namespace Protocol {
             attributes?: Protocol.IssuingAttributes.AsObject,
         }
 
-        export enum AttrFmtCase {
+        export enum AttrfmtCase {
             ATTRFMT_NOT_SET = 0,
             ATTRIBUTESJSON = 2,
             ATTRIBUTES = 3,
@@ -199,6 +199,10 @@ export namespace Protocol {
             setName(value: string): Attribute;
             getCredDefid(): string;
             setCredDefid(value: string): Attribute;
+            getId(): string;
+            setId(value: string): Attribute;
+            getValue(): string;
+            setValue(value: string): Attribute;
 
             serializeBinary(): Uint8Array;
             toObject(includeInstance?: boolean): Attribute.AsObject;
@@ -214,6 +218,61 @@ export namespace Protocol {
             export type AsObject = {
                 name: string,
                 credDefid: string,
+                id: string,
+                value: string,
+            }
+        }
+
+    }
+
+    export class Predicates extends jspb.Message { 
+        clearPredicatesList(): void;
+        getPredicatesList(): Array<Protocol.Predicates.Predicate>;
+        setPredicatesList(value: Array<Protocol.Predicates.Predicate>): Predicates;
+        addPredicates(value?: Protocol.Predicates.Predicate, index?: number): Protocol.Predicates.Predicate;
+
+        serializeBinary(): Uint8Array;
+        toObject(includeInstance?: boolean): Predicates.AsObject;
+        static toObject(includeInstance: boolean, msg: Predicates): Predicates.AsObject;
+        static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+        static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+        static serializeBinaryToWriter(message: Predicates, writer: jspb.BinaryWriter): void;
+        static deserializeBinary(bytes: Uint8Array): Predicates;
+        static deserializeBinaryFromReader(message: Predicates, reader: jspb.BinaryReader): Predicates;
+    }
+
+    export namespace Predicates {
+        export type AsObject = {
+            predicatesList: Array<Protocol.Predicates.Predicate.AsObject>,
+        }
+
+
+        export class Predicate extends jspb.Message { 
+            getName(): string;
+            setName(value: string): Predicate;
+            getPType(): string;
+            setPType(value: string): Predicate;
+            getPValue(): number;
+            setPValue(value: number): Predicate;
+            getId(): string;
+            setId(value: string): Predicate;
+
+            serializeBinary(): Uint8Array;
+            toObject(includeInstance?: boolean): Predicate.AsObject;
+            static toObject(includeInstance: boolean, msg: Predicate): Predicate.AsObject;
+            static extensions: {[key: number]: jspb.ExtensionFieldInfo<jspb.Message>};
+            static extensionsBinary: {[key: number]: jspb.ExtensionFieldBinaryInfo<jspb.Message>};
+            static serializeBinaryToWriter(message: Predicate, writer: jspb.BinaryWriter): void;
+            static deserializeBinary(bytes: Uint8Array): Predicate;
+            static deserializeBinaryFromReader(message: Predicate, reader: jspb.BinaryReader): Predicate;
+        }
+
+        export namespace Predicate {
+            export type AsObject = {
+                name: string,
+                pType: string,
+                pValue: number,
+                id: string,
             }
         }
 
@@ -231,7 +290,18 @@ export namespace Protocol {
         getAttributes(): Protocol.Proof | undefined;
         setAttributes(value?: Protocol.Proof): PresentProofMsg;
 
-        getAttrFmtCase(): PresentProofMsg.AttrFmtCase;
+        hasPredicatesjson(): boolean;
+        clearPredicatesjson(): void;
+        getPredicatesjson(): string;
+        setPredicatesjson(value: string): PresentProofMsg;
+
+        hasPredicates(): boolean;
+        clearPredicates(): void;
+        getPredicates(): Protocol.Predicates | undefined;
+        setPredicates(value?: Protocol.Predicates): PresentProofMsg;
+
+        getAttrfmtCase(): PresentProofMsg.AttrfmtCase;
+        getPredfmtCase(): PresentProofMsg.PredfmtCase;
 
         serializeBinary(): Uint8Array;
         toObject(includeInstance?: boolean): PresentProofMsg.AsObject;
@@ -247,12 +317,20 @@ export namespace Protocol {
         export type AsObject = {
             attributesjson: string,
             attributes?: Protocol.Proof.AsObject,
+            predicatesjson: string,
+            predicates?: Protocol.Predicates.AsObject,
         }
 
-        export enum AttrFmtCase {
+        export enum AttrfmtCase {
             ATTRFMT_NOT_SET = 0,
             ATTRIBUTESJSON = 1,
             ATTRIBUTES = 2,
+        }
+
+        export enum PredfmtCase {
+            PREDFMT_NOT_SET = 0,
+            PREDICATESJSON = 3,
+            PREDICATES = 4,
         }
 
     }
@@ -295,7 +373,7 @@ export namespace Protocol {
     }
 
 
-    export enum StartMsgCase {
+    export enum StartmsgCase {
         STARTMSG_NOT_SET = 0,
         DID_EXCHANGE = 10,
         ISSUE_CREDENTIAL = 11,
@@ -381,8 +459,6 @@ export class ProtocolStatus extends jspb.Message {
     setState(value?: ProtocolState): ProtocolStatus;
     getTimestamp(): number;
     setTimestamp(value: number): ProtocolStatus;
-    getStatusjson(): string;
-    setStatusjson(value: string): ProtocolStatus;
 
     hasDidExchange(): boolean;
     clearDidExchange(): void;
@@ -425,7 +501,6 @@ export namespace ProtocolStatus {
     export type AsObject = {
         state?: ProtocolState.AsObject,
         timestamp: number,
-        statusjson: string,
         didExchange?: ProtocolStatus.DIDExchangeStatus.AsObject,
         issueCredential?: ProtocolStatus.IssueCredentialStatus.AsObject,
         presentProof?: ProtocolStatus.PresentProofStatus.AsObject,
