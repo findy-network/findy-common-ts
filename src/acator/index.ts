@@ -22,7 +22,7 @@ export interface AcatorProps {
   /**
    * Seed for the identity public DID, if endorser is preregistered.
    */
-  seed: string;
+  seed?: string;
   /**
    * Authenticator master key. Keep the key secret.
    */
@@ -86,7 +86,7 @@ export const createAcator = (
     url: authUrl,
     ...(authOrigin != null && authOrigin !== '' ? { origin: authOrigin } : {}),
     'user-name': userName,
-    seed,
+    seed: seed ?? '',
     key
   };
   const rootCmd = 'findy-common-ts authn';
