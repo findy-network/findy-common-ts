@@ -129,8 +129,24 @@ message Protocol {
     message Attribute {
       string name = 1;
       string cred_defID = 2;
+      // optional attribute ID
+      string ID = 3;
+      // this field holds the attribute value in cases where the proof values
+      // should be verified by the party requesting the proof
+      string value = 4;
     }
     repeated Attribute attributes = 1;
+  }
+  // Predicates is helper type for proof request predicate lists
+  message Predicates {
+    message Predicate {
+      string name = 1;
+      string p_type = 2;
+      int64 p_value = 3;
+      // optional predicate ID
+      string ID = 4;
+    }
+    repeated Predicate predicates = 1;
   }
   // Protocol specific message type.
   message PresentProofMsg {
@@ -139,6 +155,11 @@ message Protocol {
     oneof AttrFmt {
       string attributesJSON = 1;
       Proof attributes = 2;
+    }
+    // requested predicates (indy) (optional)
+    oneof PredFmt {
+      string predicatesJSON = 3;
+      Predicates predicates = 4;
     }
   }
   // Protocol specific message type.
@@ -196,11 +217,6 @@ we have use case for that.
 message ProtocolStatus {
   ProtocolState state = 1; // Protocol state header.
   int64 timestamp = 2; // Status'es timestamp (UNIX).
-
-  // statusJSON is a protocol status in JSON format from previous API. That's
-  // the reason why the individual status sub-messages don't include JSON
-  // strings
-  string statusJSON = 3; 
 
   // DIDExchangeStatus is structure telling what's going on with DID exchange
   // protocol.

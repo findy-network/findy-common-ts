@@ -144,3 +144,7 @@ const start = async (): Promise<void> => {
    ```
    npm run e2e
    ```
+
+### Update API
+
+#
