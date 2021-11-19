@@ -1,8 +1,6 @@
 import { ClientReadableStream, closeClient } from '@grpc/grpc-js';
 import { AgentServiceClient } from '../idl/agent_grpc_pb';
 import {
-  Answer,
-  ClientID,
   CredDef,
   CredDefData,
   CredDefCreate,
@@ -12,7 +10,6 @@ import {
   SchemaCreate,
   Schema,
   SchemaData,
-  Question,
   AgentStatus,
   Notification
 } from '../idl/agent_pb';
@@ -72,34 +69,6 @@ export interface AgentClient {
     handleStatus: (status?: ListenStatus, err?: Error) => void,
     options?: ListenOptions
   ) => Promise<ClientReadableStream<AgentStatus>>;
-
-  /**
-   * Starts waiting for issuing/verifying related questions.
-   * This helper is intended for long-term agent waiting
-   * e.g. for constantly running web services. It
-   * notifies the caller using the provided callback function.
-   * @see {@link CallbackOptions} for configuration options.
-   *
-   * Note! This approach will be probably deprecated in the future
-   * and question handling will be moved to protocol service.
-   *
-   * @param handleQuestion - callback function
-   * @param options - waiting configuration
-   * @returns question stream when in need for advanced use
-   */
-  startWaiting: (
-    handleQuestion: (question?: Question, err?: Error) => void,
-    options?: CallbackOptions
-  ) => Promise<ClientReadableStream<Question>>;
-
-  /**
-   * Give is used for answering the questions arrived through waiting stream.
-   * @see {@link startWaiting}
-   *
-   * @param msg - answer
-   * @returns client id
-   */
-  give: (msg: Answer) => Promise<ClientID>;
 
   /**
    * Creates Aries invitation that can be shown/sent to another agent for new
@@ -322,7 +291,7 @@ export const createAgentClient = async (
     });
 
     stream.on('error', (err) => {
-      log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
+      log.error(`GRPC error when listening ${JSON.stringify(err)}.`);
       if (!options.retryOnError) {
         sendStatus(undefined, err);
       }
@@ -337,64 +306,6 @@ export const createAgentClient = async (
       }
     });
     return stream;
-  };
-
-  const startWaiting = async (
-    handleQuestion: (question?: Question, err?: Error) => void,
-    options: CallbackOptions = defaultCallbackOptions,
-    retryCount: number = 0
-  ): Promise<ClientReadableStream<Question>> => {
-    const msg = getClientId();
-    log.debug(`Agent: start waiting ${JSON.stringify(msg.toObject())}`);
-
-    const meta = await getMeta();
-    const timeout = parseInt(timeoutSecs, 10) * 1000 * retryCount;
-    const stream = client.wait(msg, meta);
-    let newCount = retryCount;
-    const waitAndRetry = (): NodeJS.Timeout =>
-      setTimeout(() => {
-        startWaiting(handleQuestion, options, newCount + 1).then(
-          () => log.debug(`Waiting started after ${timeout}ms`),
-          () => {}
-        );
-      }, timeout);
-
-    stream.on('data', (question: Question) => {
-      newCount = 0;
-      log.debug(`Received question ${JSON.stringify(question.toObject())}`);
-
-      const filterMsg =
-        options.filterKeepalive &&
-        question.getTypeid() === Question.Type.KEEPALIVE;
-
-      if (!filterMsg) {
-        handleQuestion(question);
-      }
-    });
-    stream.on('error', (err) => {
-      log.error(`GRPC error when waiting ${JSON.stringify(err)}.`);
-      if (!options.retryOnError) {
-        handleQuestion(undefined, err);
-      }
-      stream.cancel();
-    });
-    stream.on('end', () => {
-      log.error(`Streaming ended when waiting.`);
-      stream.cancel();
-      if (options.retryOnError) {
-        log.error(`Retry waiting...`);
-        waitAndRetry();
-      }
-    });
-    return stream;
-  };
-
-  const give = async (msg: Answer): Promise<ClientID> => {
-    log.debug(`Agent: give answer ${JSON.stringify(msg.toObject())}`);
-    const meta = await getMeta();
-    return await new Promise((resolve, reject) => {
-      client.give(msg, meta, unaryHandler('give', resolve, reject));
-    });
   };
 
   const createInvitation = async (msg: InvitationBase): Promise<Invitation> => {
@@ -464,8 +375,6 @@ export const createAgentClient = async (
 
   return {
     startListening,
-    startWaiting,
-    give,
     createInvitation,
     ping,
     createSchema,

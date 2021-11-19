@@ -1,12 +1,9 @@
 import {
-  AgentStatus,
-  Answer,
   ClientID,
   CredDef,
   CredDefCreate,
   InvitationBase,
   Notification,
-  Question,
   Schema,
   SchemaCreate
 } from '../idl/agent_pb';
@@ -82,51 +79,6 @@ describe('GRPC', () => {
       expect(res).toBeDefined();
       const resClientId = status.agent.getClientid() ?? new ClientID();
       expect(resClientId.getId()).not.toEqual('');
-    });
-    it('should wait for questions', async () => {
-      const question = await new Promise<Question>((resolve, reject) => {
-        agentClient
-          .startWaiting((q?: Question, err?: Error) => {
-            q != null ? resolve(q) : reject(err);
-          })
-          .then(
-            () => { },
-            () => { }
-          );
-      });
-      const res = question.getStatus() ?? new AgentStatus();
-      expect(res).toBeDefined();
-      const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).not.toEqual('');
-    });
-    it('should wait for questions after error', async () => {
-      const question = await new Promise<Question>((resolve, reject) => {
-        agentClient
-          .startWaiting((q?: Question, err?: Error) => {
-            q != null ? resolve(q) : reject(err);
-          })
-          .then(
-            () => { },
-            () => { }
-          );
-      });
-      const res = question.getStatus() ?? new AgentStatus();
-      expect(res).toBeDefined();
-      const resClientId = res.getClientid() ?? new ClientID();
-      expect(resClientId.getId()).not.toEqual('');
-    });
-    it('should give answer', async () => {
-      const clientID = new ClientID();
-      clientID.setId('id');
-      const msg = new Answer();
-      msg.setId('id');
-      msg.setAck(true);
-      msg.setClientid(clientID);
-      msg.setInfo('info');
-
-      const res = await agentClient.give(msg);
-      expect(res).toBeDefined();
-      expect(res.getId()).not.toEqual('');
     });
     it('should create invitation', async () => {
       const invitation = new InvitationBase();
