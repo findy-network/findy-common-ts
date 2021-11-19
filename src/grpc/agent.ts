@@ -230,6 +230,7 @@ export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta, getClientId }: MetaProvider
 ): Promise<AgentClient> => {
+
   const protocolStatusHandler =
     (protocolClient: ProtocolClient, autoRelease: boolean) =>
     async (
@@ -243,7 +244,7 @@ export const createAgentClient = async (
       try {
         const protocolStatus = await protocolClient.status(msg);
         handleStatus(protocolStatus);
-        if (autoRelease) {
+        if (autoRelease && notification.getTypeid() === Notification.Type.STATUS_UPDATE) {
           await protocolClient.release(msg);
           log.debug('Protocol released successfully');
         }
@@ -278,7 +279,8 @@ export const createAgentClient = async (
         notification.getTypeid() === Notification.Type.KEEPALIVE;
       const fetchProtocolStatus =
         autoProtocolStatus &&
-        notification.getTypeid() === Notification.Type.STATUS_UPDATE;
+        notification.getTypeid() === Notification.Type.STATUS_UPDATE
+          || notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED;
 
       if (!filterMsg) {
         if (fetchProtocolStatus && protocolClient != null) {
