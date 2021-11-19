@@ -57,7 +57,6 @@ const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
 };
 
 let listenErrorSent = false;
-let waitErrorSent = false;
 
 const getStatus = (clientId: ClientID): AgentStatus => {
   const notification = new Notification();
@@ -101,43 +100,12 @@ class AgentServer implements IAgentServiceServer {
   }
 
   async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {
-    const err = doAuth(call);
-
-    const status = getStatus(call.request);
-
-    const attr = new Question.ProofVerifyMsg.Attribute();
-    attr.setCredDefid('credDefId');
-    attr.setName('name');
-    attr.setValue('value');
-
-    const question = new Question.ProofVerifyMsg();
-    question.setAttributesList([attr]);
-
-    const msg = new Question();
-    msg.setTypeid(Question.Type.PROOF_VERIFY_WAITS);
-    msg.setStatus(status);
-    msg.setProofVerify(question);
-
-    if (err == null) {
-      if (call.request.getId().startsWith('error') && !waitErrorSent) {
-        const err = new Error('error');
-        call.emit('error', err);
-        call.end();
-        waitErrorSent = true;
-      } else {
-        call.write(msg);
-      }
-    }
   }
 
   give(
     call: ServerUnaryCall<Answer, ClientID>,
     callback: sendUnaryData<ClientID>
   ): void {
-    const err = doAuth(call);
-    const msg = new ClientID();
-    msg.setId('id');
-    callback(err, err != null ? null : msg);
   }
 
   createInvitation(
