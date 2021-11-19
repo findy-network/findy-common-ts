@@ -279,8 +279,8 @@ export const createAgentClient = async (
         notification.getTypeid() === Notification.Type.KEEPALIVE;
       const fetchProtocolStatus =
         autoProtocolStatus &&
-        notification.getTypeid() === Notification.Type.STATUS_UPDATE
-          || notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED;
+        (notification.getTypeid() === Notification.Type.STATUS_UPDATE
+          || notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED);
 
       if (!filterMsg) {
         if (fetchProtocolStatus && protocolClient != null) {
