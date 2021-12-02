@@ -47,11 +47,11 @@
   "devDependencies": {
     "@tsconfig/node14": "^1.0.1",
     "@types/jest": "^27.0.2",
-    "@types/jsonwebtoken": "^8.5.5",
+    "@types/jsonwebtoken": "^8.5.6",
     "@types/tar": "^6.1.0",
     "@types/uuid": "^8.3.1",
     "@typescript-eslint/eslint-plugin": "^5.3.0",
-    "@typescript-eslint/parser": "^5.3.0",
+    "@typescript-eslint/parser": "^5.5.0",
     "eslint": "^8.2.0",
     "eslint-config-prettier": "^8.2.0",
     "eslint-config-standard-with-typescript": "^21.0.1",
