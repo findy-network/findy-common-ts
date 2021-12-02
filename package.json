@@ -56,7 +56,7 @@
     "eslint-config-prettier": "^8.2.0",
     "eslint-config-standard-with-typescript": "^21.0.1",
     "eslint-plugin-import": "^2.25.3",
-    "eslint-plugin-jest": "^25.2.4",
+    "eslint-plugin-jest": "^25.3.0",
     "eslint-plugin-node": "^11.1.0",
     "eslint-plugin-promise": "^5.1.1",
     "eslint-plugin-tsdoc": "^0.2.14",
@@ -66,7 +66,7 @@
     "jest": "^27.4.3",
     "js-green-licenses": "^3.0.1",
     "npm-outdated-to-latest": "^1.0.3",
-    "prettier": "^2.4.1",
+    "prettier": "^2.5.0",
     "rimraf": "^3.0.2",
     "ts-jest": "^27.0.7",
     "typescript": "^4.4.4"
