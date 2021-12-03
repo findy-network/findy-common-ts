@@ -85,9 +85,9 @@ describe('e2e', () => {
 
         if (
           notification?.getTypeid() ===
-          agencyv1.Notification.Type.STATUS_UPDATE &&
+            agencyv1.Notification.Type.STATUS_UPDATE &&
           notification?.getProtocolType() ===
-          agencyv1.Protocol.Type.DIDEXCHANGE &&
+            agencyv1.Protocol.Type.DIDEXCHANGE &&
           state === agencyv1.ProtocolState.State.OK
         ) {
           connectionId.setResult(protocolStatus?.getDidExchange()?.getId());
@@ -104,9 +104,10 @@ describe('e2e', () => {
 
     const invResult = await user1.agentClient.createInvitation(invMsg);
     expect(invResult.getJson()).toBeDefined();
+    expect(invResult.getUrl()).toBeDefined();
 
     const pwMsg = new agencyv1.Protocol.DIDExchangeMsg();
-    pwMsg.setInvitationjson(invResult.getJson());
+    pwMsg.setInvitationjson(invResult.getUrl());
     pwMsg.setLabel(user2Name);
 
     const pwResult = await user2.protocolClient.connect(pwMsg);
@@ -125,9 +126,9 @@ describe('e2e', () => {
 
         if (
           notification?.getTypeid() ===
-          agencyv1.Notification.Type.STATUS_UPDATE &&
+            agencyv1.Notification.Type.STATUS_UPDATE &&
           notification?.getProtocolType() ===
-          agencyv1.Protocol.Type.BASIC_MESSAGE &&
+            agencyv1.Protocol.Type.BASIC_MESSAGE &&
           state === agencyv1.ProtocolState.State.OK
         ) {
           msg.setResult(protocolStatus?.getBasicMessage()?.getContent());
