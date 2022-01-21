@@ -207,5 +207,5 @@ describe('GRPC', () => {
     agentClient.close();
     protocolClient.close();
     await stopMock();
-  });
+  }, 10000);
 });

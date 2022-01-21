@@ -199,7 +199,6 @@ export const createAgentClient = async (
   client: AgentServiceClient,
   { getMeta, getClientId }: MetaProvider
 ): Promise<AgentClient> => {
-
   const protocolStatusHandler =
     (protocolClient: ProtocolClient, autoRelease: boolean) =>
     async (
@@ -213,7 +212,10 @@ export const createAgentClient = async (
       try {
         const protocolStatus = await protocolClient.status(msg);
         handleStatus(protocolStatus);
-        if (autoRelease && notification.getTypeid() === Notification.Type.STATUS_UPDATE) {
+        if (
+          autoRelease &&
+          notification.getTypeid() === Notification.Type.STATUS_UPDATE
+        ) {
           await protocolClient.release(msg);
           log.debug('Protocol released successfully');
         }
@@ -248,8 +250,8 @@ export const createAgentClient = async (
         notification.getTypeid() === Notification.Type.KEEPALIVE;
       const fetchProtocolStatus =
         autoProtocolStatus &&
-        (notification.getTypeid() === Notification.Type.STATUS_UPDATE
-          || notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED);
+        (notification.getTypeid() === Notification.Type.STATUS_UPDATE ||
+          notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED);
 
       if (!filterMsg) {
         if (fetchProtocolStatus && protocolClient != null) {
@@ -300,7 +302,7 @@ export const createAgentClient = async (
     stream.on('end', () => {
       log.error(`Streaming ended when listening.`);
       stream.cancel();
-      if (options.retryOnError) {
+      if (options.retryOnError && !closed) {
         log.error(`Retry listening...`);
         waitAndRetry();
       }
@@ -368,8 +370,12 @@ export const createAgentClient = async (
     });
   };
 
+  // For unit tests
+  let closed = false;
+
   const close = (): void => {
     log.debug(`Agent: close`);
+    closed = true;
     closeClient(client);
   };
 

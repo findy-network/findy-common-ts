@@ -24,7 +24,7 @@
     "update:proto": "./tools/gen-proto.sh",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "eslint ./src && eslint ./tools && eslint ./e2e",
-    "test:unit": "jest ./src --coverage --runInBand --expand",
+    "test:unit": "jest ./src --coverage --expand --detectOpenHandles",
     "test:watch": "jest ./src --watch"
   },
   "repository": {

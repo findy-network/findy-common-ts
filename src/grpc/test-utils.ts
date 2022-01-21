@@ -99,14 +99,12 @@ class AgentServer implements IAgentServiceServer {
     }
   }
 
-  async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {
-  }
+  async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {}
 
   give(
     call: ServerUnaryCall<Answer, ClientID>,
     callback: sendUnaryData<ClientID>
-  ): void {
-  }
+  ): void {}
 
   createInvitation(
     call: ServerUnaryCall<InvitationBase, Invitation>,
@@ -258,7 +256,9 @@ export default (
   };
   const stop = async (): Promise<void> => {
     return await new Promise((resolve) => {
-      server.tryShutdown(() => resolve());
+      server.tryShutdown(() => {
+        setTimeout(resolve, 6000);
+      });
       server.forceShutdown();
     });
   };
