@@ -55,8 +55,8 @@ describe('GRPC', () => {
             s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
-            () => { },
-            () => { }
+            () => {},
+            () => {}
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -71,8 +71,8 @@ describe('GRPC', () => {
             s != null ? resolve(s) : reject(new Error('error'));
           })
           .then(
-            () => { },
-            () => { }
+            () => {},
+            () => {}
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -207,5 +207,5 @@ describe('GRPC', () => {
     agentClient.close();
     protocolClient.close();
     await stopMock();
-  });
+  }, 10000);
 });
