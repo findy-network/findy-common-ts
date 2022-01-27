@@ -14,6 +14,11 @@ jobs:
         run: npm run build
       - name: test
         run: npm test
+      - name: upload coverage
+        uses: codecov/codecov-action@v2
+        with:
+          files: ./coverage/coverage-final.json
+
     env:
       FINDY_CTS_RETRY_TIMEOUT_SECS: 1
   license-check:
