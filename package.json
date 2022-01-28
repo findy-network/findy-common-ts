@@ -1,6 +1,6 @@
 {
   "name": "@findy-network/findy-common-ts",
-  "version": "0.1.7",
+  "version": "0.1.8",
   "description": "TS helpers for findy-agent API",
   "main": "./dist/index",
   "types": "./dist/index",
