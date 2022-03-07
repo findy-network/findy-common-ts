@@ -235,7 +235,7 @@ class ProtocolServer implements IProtocolServiceServer {
 
 export default (
   props: ConnectionProps
-): { start: () => void; stop: () => void } => {
+): { start: () => void; stop: () => Promise<void> } => {
   const server = new Server();
   const start = (): void => {
     const pubKey = readFileSync(`${props.certPath}/server/server.crt`);
