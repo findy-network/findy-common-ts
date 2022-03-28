@@ -269,7 +269,7 @@ export const createAgentClient = async (
   const startListening = async (
     sendStatus: (status?: ListenStatus, err?: Error) => void,
     options: ListenOptions = defaultListenOptions,
-    retryCount: number = 0
+    retryCount = 0
   ): Promise<ClientReadableStream<AgentStatus>> => {
     const msg = getClientId();
     log.debug(`Agent: start listening ${JSON.stringify(msg.toObject())}`);
