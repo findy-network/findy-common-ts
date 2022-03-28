@@ -53,6 +53,7 @@ import {
 const start = async (): Promise<void> => {
   const authUrl = 'http://localhost:8088';
   const userName = `my-chat-bot`;
+  // Authenticator key - should be kept secret
   const key =
     '15308490f1e4026284594dd08d31291bc8ef2aeac730d0daf6ff87bb92d4336c';
   const serverAddress = 'localhost';
