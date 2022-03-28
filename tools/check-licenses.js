@@ -1,5 +1,6 @@
-const jsgl = require('js-green-licenses');
-const { mkdirSync, existsSync, writeFileSync, copyFileSync } = require('fs');
+import jsgl = require('js-green-licenses');
+import fs = require('fs');
+const { mkdirSync, existsSync, writeFileSync, copyFileSync } = fs;
 
 // TODO: move to own module
 const runCheck = async (path, verbose) => {
@@ -65,6 +66,6 @@ const runCheck = async (path, verbose) => {
     console.log('1) remove incompatible package');
     console.log('2) add license to greenLicenses');
     console.log('3) add package to exception list (packageAllowList)');
-    process.exit(1);
+    throw new Error('Invalid license found!');
   }
 })();
