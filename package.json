@@ -13,7 +13,7 @@
     "build:idl": "tsc src/idl/* --allowJs --outDir dist/idl && cp src/idl/*.d.ts dist/idl",
     "clean": "rimraf dist",
     "copy:bin": "npm run preinstall && cp ./bin/findy-agent-cli node_modules/.bin/findy-common-ts",
-    "e2e": "npm run build && npm run copy:bin && npm run e2e:init && npm run e2e:test",
+    "e2e": "npm run build && npm run copy:bin && npm install && npm run e2e:init && npm run e2e:test",
     "e2e:init": "mkdir -p .data && docker-compose -f e2e/docker-compose.yml up -d",
     "e2e:test": "jest ./e2e",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
