@@ -19,7 +19,7 @@
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
     "licenses:check": "node ./tools/check-licenses.js",
-    "preinstall": "npm install --ignore-scripts && node ./dist/tools/download-cli/index.js",
+    "preinstall": "npm install --ignore-scripts --only=production && node ./dist/tools/download-cli/index.js",
     "update:deps": "npm-outdated-to-latest",
     "update:proto": "./tools/gen-proto.sh",
     "test": "npm run test:lint && npm run test:unit",
