@@ -1,7 +1,5 @@
 import fs from 'fs';
-import {
-  downloadRelease,
-} from '@terascope/fetch-github-release';
+import { downloadRelease } from '@terascope/fetch-github-release';
 import tar from 'tar';
 
 import log from '../../log';
@@ -10,13 +8,12 @@ export const CLI_VERSION = 'v0.24.20';
 export const outputPath = './bin';
 
 interface GithubRelease {
-    tag_name: string;
+  tag_name: string;
 }
 
 interface GithubReleaseAsset {
-    name: string;
+  name: string;
 }
-
 
 export default async (platform: string, arch: string): Promise<string> => {
   const user = 'findy-network';

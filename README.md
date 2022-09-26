@@ -141,24 +141,24 @@ const start = async (): Promise<void> => {
 
 1. Install typescript
 
-   ```
+   ```bash
    npm install -g typescript
    ```
 
 1. Install deps
 
-   ```
+   ```bash
    npm install --ignore-scripts
    ```
 
 1. Run unit test
 
-   ```
+   ```bash
    npm test
    ```
 
 1. Run e2e test
 
-   ```
+   ```bash
    npm run e2e
    ```
