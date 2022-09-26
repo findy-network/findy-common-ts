@@ -74,7 +74,7 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@grpc/grpc-js": "^1.6.12",
+    "@grpc/grpc-js": "^1.7.1",
     "@terascope/fetch-github-release": "^0.8.7",
     "google-protobuf": "^3.21.0",
     "jsonwebtoken": "^8.5.1",
