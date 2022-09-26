@@ -29,7 +29,7 @@ export default async (renew: Acator): Promise<MetaProvider> => {
   const getMeta = async (): Promise<Metadata> => {
     const tokenData = decode(token) as { exp: number };
     const msInSec = 1000;
-    const expiryTime = tokenData.exp * msInSec
+    const expiryTime = tokenData.exp * msInSec;
     if (tokenData == null) {
       log.error(`Invalid token, unable to parse: ${token}`);
       throw new Error('invalid token');

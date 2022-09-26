@@ -86,7 +86,7 @@ export const createAcator = (
     url: authUrl,
     ...(authOrigin != null && authOrigin !== '' ? { origin: authOrigin } : {}),
     'user-name': userName,
-    ...(seed != null ? { seed }: {}),
+    ...(seed != null ? { seed } : {}),
     key
   };
   const rootCmd = 'findy-common-ts authn';

@@ -3,7 +3,7 @@ const supported: { [key: string]: any } = {
     ia32: '386',
     x64: 'x86',
     arm: 'arm',
-    arm64: 'arm64',
+    arm64: 'arm64'
   },
   platform: {
     darwin: 'Darwin',
