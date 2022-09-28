@@ -1,0 +1,36 @@
+name: api-update
+on:
+  repository_dispatch:
+  workflow_dispatch:
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: install deps
+        run: |
+          sudo apt-get install -y protobuf-compiler
+          npm run tools:install
+      - name: update proto
+        run: npm run update:proto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: create branch
+        run: |
+          git config --global user.email "release-bot"
+          git config --global user.name "release-bot"
+          version=$(cat idl/VERSION)
+          git checkout -b update-api-to-v$version
+          git add .
+          git commit -a -m "Update API to v$version"
+          git push --set-upstream origin update-api-to-v$version
+      - name: create pr
+        run: |
+          gh pr create --base dev --fill --head update-api-to-v$(cat idl/VERSION)
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

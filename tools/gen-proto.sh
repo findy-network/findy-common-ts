@@ -13,7 +13,8 @@ rm $PROTO_DIR/* || true
 
 echo "Download proto files..."
 
-fetch-github-release findy-network findy-agent-api ./idl
+gh release download -R findy-network/findy-agent-api --pattern '*.proto' -D idl --clobber
+gh release download -R findy-network/findy-agent-api --pattern 'VERSION' -D idl --clobber
 
 TARGET_DIR=$ABS_PROTO_DIR
 
