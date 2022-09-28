@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# prerequisites: brew install jq cmake
+# prerequisites: brew install jq cmake protobuf
 
 mkdir -p .build
 mkdir -p ./node_modules/

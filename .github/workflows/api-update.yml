@@ -12,7 +12,9 @@ jobs:
         with:
           node-version: '16.x'
       - name: install deps
-        run: npm run tools:install
+        run: |
+          apt install -y protobuf-compiler
+          npm run tools:install
       - name: update proto
         run: npm run update:proto
         env:
