@@ -30,6 +30,6 @@ jobs:
           git push --set-upstream origin update-api-to-v$version
       - name: create pr
         run: |
-          gh pr create --base dev --fill
+          gh pr create --base dev --fill --head update-api-to-v$(cat idl/VERSION)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
