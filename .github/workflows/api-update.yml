@@ -32,5 +32,6 @@ jobs:
       - name: create pr
         run: |
           gh pr create --base dev --fill --head update-api-to-v$(cat idl/VERSION)
+          gh workflow run test.yml
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

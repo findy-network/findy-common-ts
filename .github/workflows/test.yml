@@ -1,9 +1,7 @@
 name: test
 on:
   push:
-  pull_request:
-    types:
-      - opened
+  workflow_dispatch:
 jobs:
   test:
     runs-on: ubuntu-latest
