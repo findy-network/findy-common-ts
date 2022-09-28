@@ -29,6 +29,8 @@ jobs:
           git add .
           git commit -a -m "Update API to v$version"
           git push --set-upstream origin update-api-to-v$version
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASER_PAT }}
       - name: create pr
         run: |
           version=$(cat idl/VERSION)
