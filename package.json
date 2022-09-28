@@ -25,7 +25,7 @@
     "preinstall": "npm install --ignore-scripts --only=production && node ./dist/tools/download-cli/index.js",
     "update:deps": "npm-outdated-to-latest",
     "update:proto": "./tools/gen-proto.sh",
-    "tools:install": "npm install grpc-tools grpc_tools_node_protoc_ts",
+    "tools:install": "npm install grpc-tools grpc_tools_node_protoc_ts protoc-gen-ts --save-dev",
     "tools:install:arm64": "./tools/build-grpc-tools.sh",
     "test": "npm run test:lint && npm run test:unit",
     "test:lint": "eslint ./src && eslint ./tools && eslint ./e2e",
