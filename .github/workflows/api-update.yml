@@ -9,6 +9,8 @@ jobs:
       - uses: actions/checkout@v3
         with:
           fetch-depth: 0
+          ref: dev
+          token: ${{ secrets.RELEASER_PAT }}
       - uses: actions/setup-node@v3
         with:
           node-version: '16.x'
@@ -31,7 +33,7 @@ jobs:
           git push --set-upstream origin update-api-to-v$version
       - name: create pr
         run: |
-          gh pr create --base dev --fill --head update-api-to-v$(cat idl/VERSION)
-          gh workflow run test.yml
+          version=$(cat idl/VERSION)
+          gh pr create --base dev --fill --head update-api-to-v$version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASER_PAT }}
