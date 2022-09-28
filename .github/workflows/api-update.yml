@@ -1,0 +1,17 @@
+name: api-update
+on:
+  push:
+  repository_dispatch:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+      - name: install deps
+        run: npm ci --ignore-scripts
+      - name: update proto
+        run: npm run update:proto
