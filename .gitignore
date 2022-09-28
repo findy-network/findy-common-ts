@@ -8,6 +8,7 @@ coverage/
 
 .secrets
 .docker
+.build
 .temp
 .data
 

@@ -12,7 +12,8 @@ jobs:
         with:
           node-version: '16.x'
       - name: install deps
-        run: |
-          npm install grpc-tools grpc_tools_node_protoc_ts
+        run: npm run tools:install
       - name: update proto
         run: npm run update:proto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
