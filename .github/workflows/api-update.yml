@@ -12,6 +12,9 @@ jobs:
         with:
           node-version: '16.x'
       - name: install deps
-        run: npm ci
+        run: |
+          npm ci --ignore-scripts
+          npm run build
+          npm ci
       - name: update proto
         run: npm run update:proto
