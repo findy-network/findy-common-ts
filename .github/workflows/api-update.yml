@@ -33,6 +33,5 @@ jobs:
         run: |
           version=$(cat idl/VERSION)
           gh pr create --base dev --fill --head update-api-to-v$version
-          gh workflow run test.yml --ref update-api-to-v$version
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.RELEASER_PAT }}
