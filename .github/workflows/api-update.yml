@@ -21,8 +21,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: create branch
         run: |
-          git config --global user.email "releasebot"
-          git config --global user.name "releasebot"
+          git config --global user.email "release-bot"
+          git config --global user.name "release-bot"
           version=$(cat idl/VERSION)
           git checkout -b update-api-to-v$version
           git add .
@@ -30,6 +30,6 @@ jobs:
           git push --set-upstream origin update-api-to-v$version
       - name: create pr
         run: |
-          gh pr create --base dev --title "Update API to v$(cat idl/VERSION)"
+          gh pr create --base dev --fill
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
