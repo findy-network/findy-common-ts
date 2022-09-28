@@ -4,7 +4,7 @@ on:
   repository_dispatch:
   workflow_dispatch:
 jobs:
-  test:
+  update:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -21,6 +21,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       - name: create branch
         run: |
+          git config --global user.email "releasebot"
+          git config --global user.name "releasebot"
           version=$(cat idl/VERSION)
           git checkout -b update-api-to-v$version
           git add .
