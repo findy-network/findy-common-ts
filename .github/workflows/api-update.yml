@@ -13,9 +13,6 @@ jobs:
           node-version: '16.x'
       - name: install deps
         run: |
-          npm ci --ignore-scripts
-          npm run build
-          rm -rf ./node_modules/
-          npm ci
+          npm install grpc-tools grpc_tools_node_protoc_ts
       - name: update proto
         run: npm run update:proto
