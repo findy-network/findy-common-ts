@@ -13,9 +13,21 @@ jobs:
           node-version: '16.x'
       - name: install deps
         run: |
-          sudo apt install -y protobuf-compiler
+          sudo apt-get install -y protobuf-compiler
           npm run tools:install
       - name: update proto
         run: npm run update:proto
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: create branch
+        run: |
+          version=$(cat idl/VERSION)
+          git checkout -b update-api-to-v$version
+          git add .
+          git commit -a -m "Update API to v$version"
+          git push --set-upstream origin update-api-to-v$version
+      - name: create pr
+        run: |
+          gh pr create --base dev --title "Update API to v$(cat idl/VERSION)"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
