@@ -1,6 +1,5 @@
 name: api-update
 on:
-  push:
   repository_dispatch:
   workflow_dispatch:
 jobs:
