@@ -31,7 +31,8 @@ jobs:
           git push --set-upstream origin update-api-to-v$version
       - name: create pr
         run: |
-          gh pr create --base dev --fill --head update-api-to-v$(cat idl/VERSION)
-          gh workflow run test.yml
+          version=$(cat idl/VERSION)
+          gh pr create --base dev --fill --head update-api-to-v$version
+          gh workflow run test.yml --ref update-api-to-v$version
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
