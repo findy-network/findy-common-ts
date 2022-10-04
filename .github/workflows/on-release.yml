@@ -4,7 +4,7 @@ on:
     tags:
       - '*'
 jobs:
-  publish:
+  publish-github:
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -21,8 +21,22 @@ jobs:
       - run: npm publish
         env:
           NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+  publish-npm:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16.x'
+          registry-url: 'https://registry.npmjs.org'
+      - run: npm ci --ignore-scripts
+      - run: npm run build
+      - run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
   merge:
     runs-on: ubuntu-latest
+    needs: [publish-github, publish-npm]
     steps:
       - name: checkout
         uses: actions/checkout@v3
