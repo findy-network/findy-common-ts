@@ -40,36 +40,48 @@ export const statusParser = (handler: StatusHandler, status?: ListenStatus, erro
     else if (notification?.getTypeid() === Notification.Type.STATUS_UPDATE &&
         state === ProtocolState.State.OK) {
         switch (notification?.getProtocolType()) {
-            case Protocol.Type.DIDEXCHANGE:
-                handler.DIDExchangeDone &&
-                    handler.DIDExchangeDone(notification.getProtocolid(), protocolStatus?.getDidExchange()!)
+            case Protocol.Type.DIDEXCHANGE: {
+                const data = protocolStatus?.getDidExchange()
+                handler.DIDExchangeDone && data &&
+                    handler.DIDExchangeDone(notification.getProtocolid(), data)
                 break;
-            case Protocol.Type.BASIC_MESSAGE:
-                handler.BasicMessageDone &&
-                    handler.BasicMessageDone(notification.getProtocolid(), protocolStatus?.getBasicMessage()!)
+            }
+            case Protocol.Type.BASIC_MESSAGE: {
+                const data = protocolStatus?.getBasicMessage()
+                handler.BasicMessageDone && data &&
+                    handler.BasicMessageDone(notification.getProtocolid(), data)
                 break;
-            case Protocol.Type.PRESENT_PROOF:
-                handler.PresentProofDone &&
-                    handler.PresentProofDone(notification.getProtocolid(), protocolStatus?.getPresentProof()!)
+            }
+            case Protocol.Type.PRESENT_PROOF: {
+                const data = protocolStatus?.getPresentProof()
+                handler.PresentProofDone && data &&
+                    handler.PresentProofDone(notification.getProtocolid(), data)
                 break;
-            case Protocol.Type.ISSUE_CREDENTIAL:
-                handler.IssueCredentialDone &&
-                    handler.IssueCredentialDone(notification.getProtocolid(), protocolStatus?.getIssueCredential()!)
+            }
+            case Protocol.Type.ISSUE_CREDENTIAL: {
+                const data = protocolStatus?.getIssueCredential()
+                handler.IssueCredentialDone && data &&
+                    handler.IssueCredentialDone(notification.getProtocolid(), data)
                 break;
+            }
             default:
                 break;
         }
         // Protocol paused
     } else if (notification?.getTypeid() === Notification.Type.PROTOCOL_PAUSED) {
         switch (notification?.getProtocolType()) {
-            case Protocol.Type.PRESENT_PROOF:
-                handler.PresentProofDone &&
-                    handler.PresentProofDone(notification.getProtocolid(), protocolStatus?.getPresentProof()!)
+            case Protocol.Type.PRESENT_PROOF: {
+                const data = protocolStatus?.getPresentProof()
+                handler.PresentProofDone && data &&
+                    handler.PresentProofDone(notification.getProtocolid(), data)
                 break;
-            case Protocol.Type.ISSUE_CREDENTIAL:
-                handler.IssueCredentialDone &&
-                    handler.IssueCredentialDone(notification.getProtocolid(), protocolStatus?.getIssueCredential()!)
+            }
+            case Protocol.Type.ISSUE_CREDENTIAL: {
+                const data = protocolStatus?.getIssueCredential()
+                handler.IssueCredentialDone && data &&
+                    handler.IssueCredentialDone(notification.getProtocolid(), data)
                 break;
+            }
             default:
                 break;
         }
