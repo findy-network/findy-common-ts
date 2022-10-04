@@ -3,7 +3,8 @@ import {
   openGRPCConnection,
   agencyv1,
   AgentClient,
-  ProtocolClient
+  ProtocolClient,
+  statusParser
 } from '../dist/index';
 
 describe('e2e', () => {
@@ -78,20 +79,10 @@ describe('e2e', () => {
     // Wait for new connection
     const connectionId = waitForResult();
     const user1Stream = await user1.agentClient.startListening(
-      (status) => {
-        const notification = status?.agent.getNotification();
-        const protocolStatus = status?.protocol;
-        const state = protocolStatus?.getState()?.getState();
-
-        if (
-          notification?.getTypeid() ===
-            agencyv1.Notification.Type.STATUS_UPDATE &&
-          notification?.getProtocolType() ===
-            agencyv1.Protocol.Type.DIDEXCHANGE &&
-          state === agencyv1.ProtocolState.State.OK
-        ) {
-          connectionId.setResult(protocolStatus?.getDidExchange()?.getId());
-        }
+      (status, err) => {
+        statusParser({
+          DIDExchangeDone: (id, data) => connectionId.setResult(data.getId())
+        }, status, err)
       },
       {
         protocolClient: user1.protocolClient,
@@ -119,20 +110,10 @@ describe('e2e', () => {
     // wait for basic message
     const msg = waitForResult();
     const user2Stream = await user2.agentClient.startListening(
-      (status) => {
-        const notification = status?.agent.getNotification();
-        const protocolStatus = status?.protocol;
-        const state = protocolStatus?.getState()?.getState();
-
-        if (
-          notification?.getTypeid() ===
-            agencyv1.Notification.Type.STATUS_UPDATE &&
-          notification?.getProtocolType() ===
-            agencyv1.Protocol.Type.BASIC_MESSAGE &&
-          state === agencyv1.ProtocolState.State.OK
-        ) {
-          msg.setResult(protocolStatus?.getBasicMessage()?.getContent());
-        }
+      (status, err) => {
+        statusParser({
+          BasicMessageDone: (id, data) => msg.setResult(data.getContent())
+        }, status, err)
       },
       {
         protocolClient: user2.protocolClient,
