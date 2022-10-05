@@ -87,7 +87,7 @@ export interface AgentClient {
    *        agencyv1.Notification.Type.STATUS_UPDATE &&
    *      notification?.getProtocolType() ===
    *        agencyv1.Protocol.Type.DIDEXCHANGE &&
-   *      state === agencyv1.ProtocolState.Stat e.OK
+   *      state === agencyv1.ProtocolState.State.OK
    *    ) {
    *      console.log("We have established a new pairwise connection!")
    *    }

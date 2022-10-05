@@ -34,12 +34,9 @@ The focus is to provide utilities especially long-running webapps that intend to
 
 ## Usage
 
-1. [Setup](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-npm-registry#authenticating-with-a-personal-access-token) GitHub package registry authentication
-
 1. Run
 
    ```sh
-   echo "@findy-network:registry=https://npm.pkg.github.com" >> .npmrc
    npm install @findy-network/findy-common-ts
    ```
 
