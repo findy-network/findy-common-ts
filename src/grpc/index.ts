@@ -10,8 +10,10 @@ import {
 } from './protocol';
 import { Acator } from '../acator';
 import metaProvider from './metadata';
+import { StatusHandler, statusParser as parser } from './status-parser';
 
-export type { AgentClient, ProtocolClient };
+export type { AgentClient, ProtocolClient, StatusHandler };
+export const statusParser = parser;
 
 /**
  * Agency GRPC connection properties
