@@ -86,6 +86,6 @@
     "winston": "^3.8.2"
   },
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com"
+    "access": "public"
   }
 }
