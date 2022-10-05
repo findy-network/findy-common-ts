@@ -84,5 +84,8 @@
     "tar": "^6.1.11",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
+  },
+  "publishConfig": {
+    "access": "public"
   }
 }
