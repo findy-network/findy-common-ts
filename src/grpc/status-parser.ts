@@ -3,6 +3,10 @@ import { ProtocolStatus, ProtocolState, Protocol } from '../idl/protocol_pb';
 import { Notification } from '../idl/agent_pb';
 import log from '../log';
 
+/**
+ * Status handler implements the callback functionality for status notifications
+ * @public
+ */
 export interface StatusHandler {
     DIDExchangeDone?: (protocolId: string, didExchange: ProtocolStatus.DIDExchangeStatus) => void,
     BasicMessageDone?: (protocolId: string, basicMessage: ProtocolStatus.BasicMessageStatus) => void,
@@ -13,6 +17,11 @@ export interface StatusHandler {
     Error?: (protocolId: string, error: Error) => void,
 }
 
+/**
+ * statusParser parses the agency status notifications and uses
+ * @see {@link StatusHandler} for notifying the client.
+ * @public
+ */
 export const statusParser = (handler: StatusHandler, status?: ListenStatus, error?: Error) => {
     const notification = status?.agent.getNotification();
     const protocolStatus = status?.protocol;
@@ -33,6 +42,7 @@ export const statusParser = (handler: StatusHandler, status?: ListenStatus, erro
     notification && log.debug(`Received ${typeName} for ${protocolName} - ${statusName}`);
 
     // Error encountered
+    // TODO: handle protocol failures
     if (error) {
         handler.Error && handler.Error(notification?.getProtocolid() || "", error)
     }
@@ -72,14 +82,14 @@ export const statusParser = (handler: StatusHandler, status?: ListenStatus, erro
         switch (notification?.getProtocolType()) {
             case Protocol.Type.PRESENT_PROOF: {
                 const data = protocolStatus?.getPresentProof()
-                handler.PresentProofDone && data &&
-                    handler.PresentProofDone(notification.getProtocolid(), data)
+                handler.PresentProofPaused && data &&
+                    handler.PresentProofPaused(notification.getProtocolid(), data)
                 break;
             }
             case Protocol.Type.ISSUE_CREDENTIAL: {
                 const data = protocolStatus?.getIssueCredential()
-                handler.IssueCredentialDone && data &&
-                    handler.IssueCredentialDone(notification.getProtocolid(), data)
+                handler.IssueCredentialPaused && data &&
+                    handler.IssueCredentialPaused(notification.getProtocolid(), data)
                 break;
             }
             default:

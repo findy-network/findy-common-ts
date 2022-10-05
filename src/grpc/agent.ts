@@ -18,6 +18,7 @@ import { ProtocolID, ProtocolStatus } from '../idl/protocol_pb';
 import log from '../log';
 import { MetaProvider } from './metadata';
 import { ProtocolClient } from './protocol';
+import { statusParser, StatusHandler } from './status-parser';
 import { unaryHandler } from './utils';
 
 const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
@@ -31,6 +32,38 @@ const timeoutSecs = process.env.FINDY_CTS_RETRY_TIMEOUT_SECS ?? '5';
  * {@link https://github.com/findy-network/findy-agent-api}
  */
 export interface AgentClient {
+  /**
+   * Starts listening agent status notification stream.
+   * This helper is intended for long-term agent listening
+   * e.g. for constantly running web services. It
+   * notifies the caller using the provided handler implementation.
+   * @see {@link ListenOptions} for configuration options.
+   *
+   * @example
+   * ```
+   * const options = {
+   *   retryOnError: true,
+   *   autoProtocolStatus: false,
+   *   filterKeepalive: true
+   * };
+   * 
+   * await agentClient.startListeningWithHandler({
+   *    DIDExchangeDone: (id, data) => {
+   *      console.log("We have established a new pairwise connection!")
+   *    }
+   * }, options);
+   *
+   * ```
+   *
+   * @param handler - handler implementation
+   * @param options - listening configuration
+   * @returns notification stream when in need for advanced use
+   */
+  startListeningWithHandler: (
+    handler: StatusHandler,
+    options?: ListenOptions
+  ) => Promise<ClientReadableStream<AgentStatus>>;
+
   /**
    * Starts listening agent status notification stream.
    * This helper is intended for long-term agent listening
@@ -54,7 +87,7 @@ export interface AgentClient {
    *        agencyv1.Notification.Type.STATUS_UPDATE &&
    *      notification?.getProtocolType() ===
    *        agencyv1.Protocol.Type.DIDEXCHANGE &&
-   *      state === agencyv1.ProtocolState.State.OK
+   *      state === agencyv1.ProtocolState.Stat e.OK
    *    ) {
    *      console.log("We have established a new pairwise connection!")
    *    }
@@ -201,28 +234,28 @@ export const createAgentClient = async (
 ): Promise<AgentClient> => {
   const protocolStatusHandler =
     (protocolClient: ProtocolClient, autoRelease: boolean) =>
-    async (
-      notification: Notification,
-      handleStatus: (status: ProtocolStatus) => void
-    ): Promise<void> => {
-      const msg = new ProtocolID();
-      msg.setId(notification.getProtocolid());
-      msg.setTypeid(notification.getProtocolType());
-      msg.setRole(notification.getRole());
-      try {
-        const protocolStatus = await protocolClient.status(msg);
-        handleStatus(protocolStatus);
-        if (
-          autoRelease &&
-          notification.getTypeid() === Notification.Type.STATUS_UPDATE
-        ) {
-          await protocolClient.release(msg);
-          log.debug('Protocol released successfully');
+      async (
+        notification: Notification,
+        handleStatus: (status: ProtocolStatus) => void
+      ): Promise<void> => {
+        const msg = new ProtocolID();
+        msg.setId(notification.getProtocolid());
+        msg.setTypeid(notification.getProtocolType());
+        msg.setRole(notification.getRole());
+        try {
+          const protocolStatus = await protocolClient.status(msg);
+          handleStatus(protocolStatus);
+          if (
+            autoRelease &&
+            notification.getTypeid() === Notification.Type.STATUS_UPDATE
+          ) {
+            await protocolClient.release(msg);
+            log.debug('Protocol released successfully');
+          }
+        } catch (err) {
+          log.error(`Error handling protocol status ${JSON.stringify(err)}`);
         }
-      } catch (err) {
-        log.error(`Error handling protocol status ${JSON.stringify(err)}`);
-      }
-    };
+      };
 
   const agentStatusHandler = (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
@@ -239,7 +272,7 @@ export const createAgentClient = async (
     const handleProtocolStatus =
       protocolClient != null
         ? protocolStatusHandler(protocolClient, autoRelease)
-        : () => {};
+        : () => { };
 
     return (status: AgentStatus) => {
       log.debug(`Received status ${JSON.stringify(status.toObject())}`);
@@ -309,6 +342,14 @@ export const createAgentClient = async (
     });
     return stream;
   };
+
+  const startListeningWithHandler = async (
+    handler: StatusHandler,
+    options?: ListenOptions
+  ): Promise<ClientReadableStream<AgentStatus>> => startListening(
+    (status, err) => statusParser(handler, status, err),
+    options,
+  )
 
   const createInvitation = async (msg: InvitationBase): Promise<Invitation> => {
     log.debug(`Agent: create invitation ${JSON.stringify(msg.toObject())}`);
@@ -381,6 +422,7 @@ export const createAgentClient = async (
 
   return {
     startListening,
+    startListeningWithHandler,
     createInvitation,
     ping,
     createSchema,

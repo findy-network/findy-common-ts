@@ -106,18 +106,10 @@ const start = async (): Promise<void> => {
     autoProtocolStatus: true,
     filterKeepalive: true
   };
-  await agentClient.startListening((status) => {
-    const notification = status?.agent.getNotification();
-    const protocolStatus = status?.protocol;
-    const state = protocolStatus?.getState()?.getState();
-
-    if (
-      notification?.getTypeid() === agencyv1.Notification.Type.STATUS_UPDATE &&
-      notification?.getProtocolType() === agencyv1.Protocol.Type.DIDEXCHANGE &&
-      state === agencyv1.ProtocolState.State.OK
-    ) {
+  await agentClient.startListeningWithHandler({
+    DIDExchangeDone: (id, data) => {
       // connection established, send message to new connection
-      const connectionId = protocolStatus?.getDidExchange()?.getId();
+      const connectionId = data.getId();
       const basicMsg = new agencyv1.Protocol.BasicMessageMsg();
       basicMsg.setContent('Hello world');
 

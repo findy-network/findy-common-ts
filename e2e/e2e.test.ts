@@ -78,11 +78,9 @@ describe('e2e', () => {
 
     // Wait for new connection
     const connectionId = waitForResult();
-    const user1Stream = await user1.agentClient.startListening(
-      (status, err) => {
-        statusParser({
-          DIDExchangeDone: (id, data) => connectionId.setResult(data.getId())
-        }, status, err)
+    const user1Stream = await user1.agentClient.startListeningWithHandler(
+      {
+        DIDExchangeDone: (id, data) => connectionId.setResult(data.getId())
       },
       {
         protocolClient: user1.protocolClient,
@@ -109,11 +107,9 @@ describe('e2e', () => {
 
     // wait for basic message
     const msg = waitForResult();
-    const user2Stream = await user2.agentClient.startListening(
-      (status, err) => {
-        statusParser({
-          BasicMessageDone: (id, data) => msg.setResult(data.getContent())
-        }, status, err)
+    const user2Stream = await user2.agentClient.startListeningWithHandler(
+      {
+        BasicMessageDone: (id, data) => msg.setResult(data.getContent())
       },
       {
         protocolClient: user2.protocolClient,
