@@ -48,7 +48,7 @@ export interface AgentClient {
    * };
    * 
    * await agentClient.startListeningWithHandler({
-   *    DIDExchangeDone: (id, data) => {
+   *    DIDExchangeDone: (info, data) => {
    *      console.log("We have established a new pairwise connection!")
    *    }
    * }, options);

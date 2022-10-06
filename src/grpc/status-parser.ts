@@ -4,17 +4,27 @@ import { Notification } from '../idl/agent_pb';
 import log from '../log';
 
 /**
+ * ProtocolInfo contains info about the protocol.
+ * @public
+ */
+export interface ProtocolInfo {
+    protocolId: string
+    connectionId: string
+    success: boolean
+}
+
+/**
  * Status handler implements the callback functionality for status notifications
  * @public
  */
 export interface StatusHandler {
-    DIDExchangeDone?: (protocolId: string, didExchange: ProtocolStatus.DIDExchangeStatus) => void,
-    BasicMessageDone?: (protocolId: string, basicMessage: ProtocolStatus.BasicMessageStatus) => void,
-    IssueCredentialPaused?: (protocolId: string, issueCredential: ProtocolStatus.IssueCredentialStatus) => void,
-    IssueCredentialDone?: (protocolId: string, issueCredential: ProtocolStatus.IssueCredentialStatus) => void,
-    PresentProofPaused?: (protocolId: string, presentProof: ProtocolStatus.PresentProofStatus) => void,
-    PresentProofDone?: (protocolId: string, presentProof: ProtocolStatus.PresentProofStatus) => void,
-    Error?: (protocolId: string, error: Error) => void,
+    DIDExchangeDone?: (info: ProtocolInfo, didExchange: ProtocolStatus.DIDExchangeStatus) => void,
+    BasicMessageDone?: (info: ProtocolInfo, basicMessage: ProtocolStatus.BasicMessageStatus) => void,
+    IssueCredentialPaused?: (info: ProtocolInfo, issueCredential: ProtocolStatus.IssueCredentialStatus) => void,
+    IssueCredentialDone?: (info: ProtocolInfo, issueCredential: ProtocolStatus.IssueCredentialStatus) => void,
+    PresentProofPaused?: (info: ProtocolInfo, presentProof: ProtocolStatus.PresentProofStatus) => void,
+    PresentProofDone?: (info: ProtocolInfo, presentProof: ProtocolStatus.PresentProofStatus) => void,
+    Error?: (info: ProtocolInfo, error: Error) => void,
 }
 
 /**
@@ -41,37 +51,42 @@ export const statusParser = (handler: StatusHandler, status?: ListenStatus, erro
     const statusName = getValueName(ProtocolState.State, state);
     notification && log.debug(`Received ${typeName} for ${protocolName} - ${statusName}`);
 
+    const info = {
+        protocolId: notification?.getProtocolid() || "",
+        connectionId: notification?.getConnectionid() || "",
+        success: state === ProtocolState.State.OK
+    }
+
     // Error encountered
-    // TODO: handle protocol failures
     if (error) {
-        handler.Error && handler.Error(notification?.getProtocolid() || "", error)
+        handler.Error && handler.Error(info, error)
     }
     // Protocol ready
     else if (notification?.getTypeid() === Notification.Type.STATUS_UPDATE &&
-        state === ProtocolState.State.OK) {
+        state === ProtocolState.State.OK || state === ProtocolState.State.ERR) {
         switch (notification?.getProtocolType()) {
             case Protocol.Type.DIDEXCHANGE: {
                 const data = protocolStatus?.getDidExchange()
                 handler.DIDExchangeDone && data &&
-                    handler.DIDExchangeDone(notification.getProtocolid(), data)
+                    handler.DIDExchangeDone(info, data)
                 break;
             }
             case Protocol.Type.BASIC_MESSAGE: {
                 const data = protocolStatus?.getBasicMessage()
                 handler.BasicMessageDone && data &&
-                    handler.BasicMessageDone(notification.getProtocolid(), data)
+                    handler.BasicMessageDone(info, data)
                 break;
             }
             case Protocol.Type.PRESENT_PROOF: {
                 const data = protocolStatus?.getPresentProof()
                 handler.PresentProofDone && data &&
-                    handler.PresentProofDone(notification.getProtocolid(), data)
+                    handler.PresentProofDone(info, data)
                 break;
             }
             case Protocol.Type.ISSUE_CREDENTIAL: {
                 const data = protocolStatus?.getIssueCredential()
                 handler.IssueCredentialDone && data &&
-                    handler.IssueCredentialDone(notification.getProtocolid(), data)
+                    handler.IssueCredentialDone(info, data)
                 break;
             }
             default:
@@ -83,13 +98,13 @@ export const statusParser = (handler: StatusHandler, status?: ListenStatus, erro
             case Protocol.Type.PRESENT_PROOF: {
                 const data = protocolStatus?.getPresentProof()
                 handler.PresentProofPaused && data &&
-                    handler.PresentProofPaused(notification.getProtocolid(), data)
+                    handler.PresentProofPaused(info, data)
                 break;
             }
             case Protocol.Type.ISSUE_CREDENTIAL: {
                 const data = protocolStatus?.getIssueCredential()
                 handler.IssueCredentialPaused && data &&
-                    handler.IssueCredentialPaused(notification.getProtocolid(), data)
+                    handler.IssueCredentialPaused(info, data)
                 break;
             }
             default:

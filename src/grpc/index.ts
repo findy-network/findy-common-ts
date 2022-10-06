@@ -10,9 +10,9 @@ import {
 } from './protocol';
 import { Acator } from '../acator';
 import metaProvider from './metadata';
-import { StatusHandler, statusParser as parser } from './status-parser';
+import { StatusHandler, ProtocolInfo, statusParser as parser } from './status-parser';
 
-export type { AgentClient, ProtocolClient, StatusHandler };
+export type { AgentClient, ProtocolClient, StatusHandler, ProtocolInfo };
 export const statusParser = parser;
 
 /**
