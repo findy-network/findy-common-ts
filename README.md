@@ -47,6 +47,7 @@ The focus is to provide utilities especially long-running webapps that intend to
    - Core agency server address (_`localhost`_)
    - Core agency server port (_`50052`_)
    - Path to core agency TLS cert files (_`/path/to/this/repo/tools/config/cert`_)
+   -- unless the certificate is issued by a trusted issuer
 
 1. Check [example](#example) how to authenticate to agency and connect to other agents using the library. More advanced examples can be found in [sample webapp implementation](https://github.com/findy-network/findy-issuer-tool).
 
