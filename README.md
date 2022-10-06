@@ -105,9 +105,9 @@ const start = async (): Promise<void> => {
     filterKeepalive: true
   };
   await agentClient.startListeningWithHandler({
-    DIDExchangeDone: (id, data) => {
+    DIDExchangeDone: (info, data) => {
       // connection established, send message to new connection
-      const connectionId = data.getId();
+      const connectionId = info.connectionId;
       const basicMsg = new agencyv1.Protocol.BasicMessageMsg();
       basicMsg.setContent('Hello world');
 

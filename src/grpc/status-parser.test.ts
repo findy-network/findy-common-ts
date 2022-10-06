@@ -25,8 +25,8 @@ describe('statusParser', () => {
             doneStatus.protocol.setDidExchange(new ProtocolStatus.DIDExchangeStatus())
 
             statusParser({
-                DIDExchangeDone(protocolId, _) {
-                    receivedId = protocolId
+                DIDExchangeDone(info) {
+                    receivedId = info.protocolId
                 },
             }, doneStatus, undefined)
             expect(receivedId).toMatch(protocolId);
@@ -39,8 +39,8 @@ describe('statusParser', () => {
             doneStatus.protocol.setBasicMessage(new ProtocolStatus.BasicMessageStatus())
 
             statusParser({
-                BasicMessageDone(protocolId, _) {
-                    receivedId = protocolId
+                BasicMessageDone(info) {
+                    receivedId = info.protocolId
                 },
             }, doneStatus, undefined)
             expect(receivedId).toMatch(protocolId);
@@ -53,8 +53,8 @@ describe('statusParser', () => {
             doneStatus.protocol.setPresentProof(new ProtocolStatus.PresentProofStatus())
 
             statusParser({
-                PresentProofDone(protocolId, _) {
-                    receivedId = protocolId
+                PresentProofDone(info) {
+                    receivedId = info.protocolId
                 },
             }, doneStatus, undefined)
             expect(receivedId).toMatch(protocolId);
@@ -67,8 +67,8 @@ describe('statusParser', () => {
             doneStatus.protocol.setIssueCredential(new ProtocolStatus.IssueCredentialStatus())
 
             statusParser({
-                IssueCredentialDone(protocolId, _) {
-                    receivedId = protocolId
+                IssueCredentialDone(info) {
+                    receivedId = info.protocolId
                 },
             }, doneStatus, undefined)
             expect(receivedId).toMatch(protocolId);
@@ -94,8 +94,8 @@ describe('statusParser', () => {
             pausedStatus.protocol.setPresentProof(new ProtocolStatus.PresentProofStatus())
 
             statusParser({
-                PresentProofPaused(protocolId, _) {
-                    receivedId = protocolId
+                PresentProofPaused(info) {
+                    receivedId = info.protocolId
                 },
             }, pausedStatus, undefined)
             expect(receivedId).toMatch(protocolId);
@@ -108,8 +108,8 @@ describe('statusParser', () => {
             pausedStatus.protocol.setIssueCredential(new ProtocolStatus.IssueCredentialStatus())
 
             statusParser({
-                IssueCredentialPaused(protocolId, _) {
-                    receivedId = protocolId
+                IssueCredentialPaused(info) {
+                    receivedId = info.protocolId
                 },
             }, pausedStatus, undefined)
             expect(receivedId).toMatch(protocolId);
