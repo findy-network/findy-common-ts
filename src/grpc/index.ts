@@ -85,6 +85,7 @@ export const openGRPCConnection = async (
     const clientCert = fs.existsSync(clientCertPath)
       ? fs.readFileSync(clientCertPath)
       : null;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const args: any[] = [rootCert, clientKey, clientCert];
     if (verifyServerIdentity != null && !verifyServerIdentity) {
       args.push({ checkServerIdentity: () => null });

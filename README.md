@@ -98,11 +98,7 @@ const start = async (): Promise<void> => {
 
   // Start listening to agent notifications
   const options = {
-    protocolClient: protocolClient,
-    retryOnError: false,
-    autoRelease: true,
-    autoProtocolStatus: true,
-    filterKeepalive: true
+    protocolClient: protocolClient
   };
   await agentClient.startListeningWithHandler({
     DIDExchangeDone: (info, data) => {
