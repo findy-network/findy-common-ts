@@ -42,9 +42,7 @@ export interface AgentClient {
    * @example
    * ```
    * const options = {
-   *   retryOnError: true,
-   *   autoProtocolStatus: false,
-   *   filterKeepalive: true
+   *   protocolClient
    * };
    * 
    * await agentClient.startListeningWithHandler({
@@ -61,7 +59,7 @@ export interface AgentClient {
    */
   startListeningWithHandler: (
     handler: StatusHandler,
-    options?: ListenOptions
+    options: ListenOptions
   ) => Promise<ClientReadableStream<AgentStatus>>;
 
   /**
@@ -74,9 +72,7 @@ export interface AgentClient {
    * @example
    * ```
    * const options = {
-   *   retryOnError: true,
-   *   autoProtocolStatus: false,
-   *   filterKeepalive: true
+   *   protocolClient
    * };
    *
    * await agentClient.startListening(
@@ -100,7 +96,7 @@ export interface AgentClient {
    */
   startListening: (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
-    options?: ListenOptions
+    options: ListenOptions
   ) => Promise<ClientReadableStream<AgentStatus>>;
 
   /**
@@ -166,12 +162,12 @@ export interface CallbackOptions {
    * If true, connection is retried exponentially on connection error.
    * @defaultValue true
    */
-  retryOnError: boolean;
+  retryOnError?: boolean;
   /**
    * If true, keepalive messages are filtered out from status callbacks.
    * @defaultValue true
    */
-  filterKeepalive: boolean;
+  filterKeepalive?: boolean;
 }
 
 const defaultCallbackOptions = {
@@ -186,27 +182,18 @@ const defaultCallbackOptions = {
 export interface ListenOptions extends CallbackOptions {
   /**
    * If true, succesful protocol is automatically released.
-   * This setting is effective only when {@link autoProtocolStatus} is true.
-   * @defaultValue false
+   * @defaultValue true
    */
-  autoRelease: boolean;
-  /**
-   * If true, protocol status information is fetched automatically.
-   * When true, {@link protocolClient} needs to be set as well.
-   * @defaultValue false
-   */
-  autoProtocolStatus: boolean;
+  autoRelease?: boolean;
   /**
    * Protocol client for fetching protocol status.
-   * @defaultValue undefined
    */
-  protocolClient?: ProtocolClient;
+  protocolClient: ProtocolClient;
 }
 
 const defaultListenOptions = {
   ...defaultCallbackOptions,
-  autoRelease: false,
-  autoProtocolStatus: false
+  autoRelease: true
 };
 
 /**
@@ -219,7 +206,7 @@ export interface ListenStatus {
    */
   agent: AgentStatus;
   /**
-   * Protocol notification status, if autoProtocolStatus is true
+   * Protocol notification status
    */
   protocol?: ProtocolStatus;
 }
@@ -261,17 +248,17 @@ export const createAgentClient = async (
     handleStatus: (status?: ListenStatus, err?: Error) => void,
     options: ListenOptions
   ): ((status: AgentStatus) => void) => {
-    const { autoProtocolStatus, protocolClient, filterKeepalive, autoRelease } =
+    const { protocolClient, filterKeepalive, autoRelease } =
       options;
-    if (autoProtocolStatus && protocolClient == null) {
+    if (protocolClient == null) {
       throw new Error(
-        'Set valid protocol client when using auto protocol status'
+        'Set valid protocol client when listening to protocol status'
       );
     }
 
     const handleProtocolStatus =
       protocolClient != null
-        ? protocolStatusHandler(protocolClient, autoRelease)
+        ? protocolStatusHandler(protocolClient, autoRelease || defaultListenOptions.autoRelease)
         : () => { };
 
     return (status: AgentStatus) => {
@@ -282,7 +269,6 @@ export const createAgentClient = async (
         filterKeepalive &&
         notification.getTypeid() === Notification.Type.KEEPALIVE;
       const fetchProtocolStatus =
-        autoProtocolStatus &&
         (notification.getTypeid() === Notification.Type.STATUS_UPDATE ||
           notification.getTypeid() === Notification.Type.PROTOCOL_PAUSED);
 
@@ -301,7 +287,7 @@ export const createAgentClient = async (
 
   const startListening = async (
     sendStatus: (status?: ListenStatus, err?: Error) => void,
-    options: ListenOptions = defaultListenOptions,
+    options: ListenOptions,
     retryCount = 0
   ): Promise<ClientReadableStream<AgentStatus>> => {
     const msg = getClientId();
@@ -345,7 +331,7 @@ export const createAgentClient = async (
 
   const startListeningWithHandler = async (
     handler: StatusHandler,
-    options?: ListenOptions
+    options: ListenOptions
   ): Promise<ClientReadableStream<AgentStatus>> => startListening(
     (status, err) => statusParser(handler, status, err),
     options,

@@ -4,7 +4,6 @@ import {
   agencyv1,
   AgentClient,
   ProtocolClient,
-  statusParser
 } from '../dist/index';
 
 describe('e2e', () => {
@@ -41,14 +40,19 @@ describe('e2e', () => {
   };
 
   const waitForResult = (): {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     setResult: (value: any) => void;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     wait: () => Promise<any>;
   } => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     let result: any;
     return {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       setResult: (value: any) => {
         result = value;
       },
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       wait: async (): Promise<any> =>
         await new Promise((resolve): void => {
           const checkResult = (): void => {
@@ -85,9 +89,6 @@ describe('e2e', () => {
       {
         protocolClient: user1.protocolClient,
         retryOnError: false,
-        autoRelease: true,
-        autoProtocolStatus: true,
-        filterKeepalive: true
       }
     );
 
@@ -114,9 +115,6 @@ describe('e2e', () => {
       {
         protocolClient: user2.protocolClient,
         retryOnError: false,
-        autoRelease: true,
-        autoProtocolStatus: true,
-        filterKeepalive: true
       }
     );
 

@@ -53,10 +53,10 @@ describe('GRPC', () => {
         agentClient
           .startListening((s?: ListenStatus) => {
             s != null ? resolve(s) : reject(new Error('error'));
-          })
+          }, { protocolClient })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -69,10 +69,10 @@ describe('GRPC', () => {
         agentClient
           .startListening((s?: ListenStatus) => {
             s != null ? resolve(s) : reject(new Error('error'));
-          })
+          }, { protocolClient })
           .then(
-            () => {},
-            () => {}
+            () => { },
+            () => { }
           );
       });
       const res = status.agent.getNotification() ?? new Notification();

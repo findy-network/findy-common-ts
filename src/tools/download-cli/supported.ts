@@ -1,4 +1,4 @@
-const supported: { [key: string]: any } = {
+const supported: { [key: string]: { [key: string]: string } } = {
   arch: {
     ia32: '386',
     x64: 'x86',

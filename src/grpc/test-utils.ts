@@ -11,7 +11,6 @@ import { sign } from 'jsonwebtoken';
 
 import {
   AgentStatus,
-  Answer,
   ClientID,
   CredDef,
   CredDefCreate,
@@ -21,7 +20,6 @@ import {
   ModeCmd,
   Notification,
   PingMsg,
-  Question,
   Schema,
   SchemaCreate,
   SchemaData
@@ -43,6 +41,7 @@ export const getToken = (expiresIn: string): string => {
   return sign({ un: 'minnie' }, 'whatever', { expiresIn });
 };
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const doAuth = (call: ServerUnaryCall<any, any>): Error | null => {
   const header = call.metadata.get('Authorization')[0] as string;
   const prefix = 'Bearer ';
@@ -99,12 +98,9 @@ class AgentServer implements IAgentServiceServer {
     }
   }
 
-  async wait(call: ServerWritableStream<ClientID, Question>): Promise<void> {}
+  async wait(): Promise<void> { }
 
-  give(
-    call: ServerUnaryCall<Answer, ClientID>,
-    callback: sendUnaryData<ClientID>
-  ): void {}
+  give(): void { }
 
   createInvitation(
     call: ServerUnaryCall<InvitationBase, Invitation>,
