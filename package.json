@@ -68,7 +68,7 @@
     "grpc_tools_node_protoc_ts": "^5.3.2",
     "grpc-tools": "^1.11.2",
     "jest": "^27.5.1",
-    "js-green-licenses": "^3.0.1",
+    "js-green-licenses": "^4.0.0",
     "npm-outdated-to-latest": "^1.0.6",
     "prettier": "^2.7.1",
     "protoc-gen-ts": "^0.8.5",
