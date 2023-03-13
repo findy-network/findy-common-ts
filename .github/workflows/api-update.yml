@@ -13,7 +13,7 @@ jobs:
           token: ${{ secrets.RELEASER_PAT }}
       - uses: actions/setup-node@v3
         with:
-          node-version: '16.x'
+          node-version: '18.x'
       - name: install deps
         run: |
           sudo apt-get install -y protobuf-compiler
