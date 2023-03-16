@@ -9,20 +9,21 @@
   "types": "./dist/index",
   "bin": "./bin/findy-agent-cli",
   "files": [
-    "dist"
+    "dist",
+    "tools/node-pre-gyp.js"
   ],
   "scripts": {
     "build": "npm run clean && tsc --module commonjs && npm run build:idl",
     "build:idl": "tsc src/idl/* --allowJs --outDir dist/idl && cp src/idl/*.d.ts dist/idl",
     "clean": "rimraf dist",
-    "copy:bin": "npm run preinstall && cp ./bin/findy-agent-cli node_modules/.bin/findy-common-ts",
-    "e2e": "npm run build && npm run copy:bin && npm install --ignore-scripts && npm run e2e:init && npm run e2e:test",
+    "copy:bin": "ln -s ./bin/findy-agent-cli node_modules/.bin/findy-common-ts",
+    "e2e": "npm run build && npm run copy:bin && npm run e2e:init && npm run e2e:test",
     "e2e:init": "mkdir -p .data && docker-compose -f e2e/docker-compose.yml up -d",
     "e2e:test": "jest ./e2e",
     "format": "prettier --config .prettierrc 'src/**/*.ts' --write",
+    "install": "node-pre-gyp install --target_platform=$(node tools/node-pre-gyp.js platform) --target_arch=$(node tools/node-pre-gyp.js arch)",
     "licenses:report": "node ./tools/check-licenses.js report ./dist/licenses.txt",
     "licenses:check": "node ./tools/check-licenses.js",
-    "preinstall": "npm install --ignore-scripts --only=production && node ./dist/tools/download-cli/index.js",
     "update:deps": "npm-outdated-to-latest",
     "update:proto": "./tools/gen-proto.sh",
     "tools:install": "npm install grpc-tools grpc_tools_node_protoc_ts protoc-gen-ts --save-dev",
@@ -79,14 +80,20 @@
   },
   "dependencies": {
     "@grpc/grpc-js": "^1.7.1",
-    "@terascope/fetch-github-release": "^0.8.7",
+    "@mapbox/node-pre-gyp": "^1.0.10",
     "google-protobuf": "^3.21.0",
     "jsonwebtoken": "^9.0.0",
-    "tar": "^6.1.11",
     "uuid": "^9.0.0",
     "winston": "^3.8.2"
   },
   "publishConfig": {
     "access": "public"
+  },
+  "binary": {
+    "module_name": "findy-agent-cli",
+    "module_path": "bin",
+    "remote_path": "v0.24.50",
+    "host": "https://github.com/findy-network/findy-agent-cli/releases/download/",
+    "package_name": "findy-agent-cli_0.24.50_{platform}_{arch}.tar.gz"
   }
 }
