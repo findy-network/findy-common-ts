@@ -11,7 +11,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: install deps
-        run: npm ci --ignore-scripts
+        run: npm ci
       - name: build
         run: npm run build
       - name: test
@@ -32,7 +32,7 @@ jobs:
         with:
           node-version: '18.x'
       - name: install deps
-        run: npm ci --ignore-scripts
+        run: npm ci
       - name: run check
         run: npm run licenses:check
   e2e:
@@ -43,6 +43,6 @@ jobs:
         with:
           node-version: '18.x'
       - name: install deps
-        run: npm ci --ignore-scripts
+        run: npm ci
       - name: test
         run: npm run e2e

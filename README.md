@@ -134,7 +134,7 @@ const start = async (): Promise<void> => {
 1. Install deps
 
    ```bash
-   npm install --ignore-scripts
+   npm install
    ```
 
 1. Run unit test
