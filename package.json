@@ -92,8 +92,8 @@
   "binary": {
     "module_name": "findy-agent-cli",
     "module_path": "bin",
-    "remote_path": "v0.24.50",
+    "remote_path": "v0.24.52",
     "host": "https://github.com/findy-network/findy-agent-cli/releases/download/",
-    "package_name": "findy-agent-cli_0.24.50_{platform}_{arch}.tar.gz"
+    "package_name": "findy-agent-cli_{platform}_{arch}.tar.gz"
   }
 }
