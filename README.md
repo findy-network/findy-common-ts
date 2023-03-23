@@ -27,8 +27,8 @@ This library provides utilities for connecting to Findy Agency from a Node.js-ap
 It provides
 
 - means to authenticate to agency using [findy auth services](https://github.com/findy-network/findy-agent-auth)
-- helpers for opening and making [the GRPC API](https://github.com/findy-network/findy-agent-api) calls
-- TS code generated from GRPC API proto file
+- helpers for opening and making [the gRPC API](https://github.com/findy-network/findy-agent-api) calls
+- TS code generated from gRPC API proto file
 
 The focus is to provide utilities especially long-running webapps that intend to issue and verify credentials.
 
@@ -84,7 +84,7 @@ const start = async (): Promise<void> => {
   };
   const authenticator = createAcator(acatorProps);
 
-  // Open GRPC connection to core agency
+  // Open gRPC connection to core agency
   const grpcProps = {
     serverAddress,
     serverPort,
