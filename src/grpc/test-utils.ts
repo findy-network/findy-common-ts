@@ -98,9 +98,9 @@ class AgentServer implements IAgentServiceServer {
     }
   }
 
-  async wait(): Promise<void> { }
+  async wait(): Promise<void> {}
 
-  give(): void { }
+  give(): void {}
 
   createInvitation(
     call: ServerUnaryCall<InvitationBase, Invitation>,

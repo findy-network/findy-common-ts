@@ -5,6 +5,7 @@ import { v4 as uuidv4 } from 'uuid';
 import log from '../log';
 import { Acator } from '../acator';
 import { ClientID } from '../idl/agent_pb';
+import { timeoutSecs } from './agent';
 
 export interface MetaProvider {
   getClientId: () => ClientID;
@@ -26,7 +27,10 @@ export default async (renew: Acator): Promise<MetaProvider> => {
     return clientId;
   };
 
-  const getMeta = async (): Promise<Metadata> => {
+  const sleep = async (ms: number): Promise<void> =>
+    new Promise((resolve) => setTimeout(resolve, ms));
+
+  const createMeta = async (): Promise<Metadata> => {
     const tokenData = decode(token) as { exp: number };
     const msInSec = 1000;
     const expiryTime = tokenData.exp * msInSec;
@@ -44,6 +48,22 @@ export default async (renew: Acator): Promise<MetaProvider> => {
 
     const meta = new Metadata();
     meta.add('Authorization', `Bearer ${token}`);
+    return meta;
+  };
+
+  const getMeta = async (): Promise<Metadata> => {
+    let meta: Metadata | undefined;
+    let retryCount = 1;
+    const timeoutStep = parseInt(timeoutSecs, 10);
+
+    while (!meta) {
+      try {
+        meta = await createMeta();
+      } catch (err) {
+        log.error(`Error creating metadata: ${err}`);
+        await sleep(timeoutStep * 1000 * retryCount++);
+      }
+    }
     return meta;
   };
 
