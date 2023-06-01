@@ -51,12 +51,15 @@ describe('GRPC', () => {
     it('should listen for status', async () => {
       const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s?: ListenStatus) => {
-            s != null ? resolve(s) : reject(new Error('error'));
-          }, { protocolClient })
+          .startListening(
+            (s?: ListenStatus) => {
+              s != null ? resolve(s) : reject(new Error('error'));
+            },
+            { protocolClient }
+          )
           .then(
-            () => { },
-            () => { }
+            () => {},
+            () => {}
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
@@ -67,12 +70,15 @@ describe('GRPC', () => {
     it('should listen for status after error', async () => {
       const status = await new Promise<ListenStatus>((resolve, reject) => {
         agentClient
-          .startListening((s?: ListenStatus) => {
-            s != null ? resolve(s) : reject(new Error('error'));
-          }, { protocolClient })
+          .startListening(
+            (s?: ListenStatus) => {
+              s != null ? resolve(s) : reject(new Error('error'));
+            },
+            { protocolClient }
+          )
           .then(
-            () => { },
-            () => { }
+            () => {},
+            () => {}
           );
       });
       const res = status.agent.getNotification() ?? new Notification();
