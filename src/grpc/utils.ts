@@ -3,8 +3,7 @@ import log from '../log';
 
 export const unaryHandler =
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
-
-    (name: string, resolve: (res: any) => void, reject: (err: any) => void) =>
+  (name: string, resolve: (res: any) => void, reject: (err: any) => void) =>
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     (err: ServiceError | null, res: any): void => {
       if (err != null) {
