@@ -59,6 +59,7 @@ export const statusParser = (
   const protocolStatus = status?.protocol;
   const state = protocolStatus?.getState()?.getState();
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const getValueName = (obj: any, code: number | undefined) =>
     Object.keys(obj).find((item) => obj[item] === code);
 
