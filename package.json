@@ -1,6 +1,6 @@
 {
   "name": "@findy-network/findy-common-ts",
-  "version": "0.3.8",
+  "version": "0.3.9",
   "engines": {
     "node": ">=16.0.0"
   },
