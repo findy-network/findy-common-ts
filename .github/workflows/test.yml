@@ -21,6 +21,7 @@ jobs:
         with:
           files: ./coverage/coverage-final.json
           fail_ci_if_error: true
+          token: ${{ secrets.CODECOV_TOKEN }}
 
     env:
       FINDY_CTS_RETRY_TIMEOUT_SECS: 1
